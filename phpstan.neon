@@ -1,0 +1,9 @@
+parameters:
+    level: 8
+    paths:
+        - src
+        - tests
+    
+    ignoreErrors:
+        # Allow using file_get_contents with URLs in tests
+        - '#Call to function file_get_contents\(\) with .* will always evaluate to false#'
