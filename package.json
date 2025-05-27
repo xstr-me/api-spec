@@ -7,9 +7,8 @@
     "api-spec.yml",
     "README.md",
     "LICENSE"
-  ],
-  "scripts": {
-    "validate": "swagger-codegen validate -i api-spec.yml",
+  ],  "scripts": {
+    "validate": "redocly lint api-spec.yml",
     "generate-docs": "redoc-cli build api-spec.yml --output docs/index.html",
     "lint": "spectral lint api-spec.yml",
     "test": "npm run validate && npm run lint",
@@ -28,16 +27,18 @@
     "xstr",
     "swagger",
     "rest"
-  ],  "author": "XStr.me Team",
+  ],
+  "author": "XStr.me Team",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/xstr-me/api-spec/issues"
   },
   "homepage": "https://github.com/xstr-me/api-spec#readme",
   "devDependencies": {
+    "@apidevtools/swagger-cli": "^4.0.4",
+    "@redocly/cli": "^1.34.3",
     "@stoplight/spectral-cli": "^6.11.0",
-    "redoc-cli": "^0.13.21",
-    "swagger-codegen": "^3.0.0"
+    "redoc-cli": "^0.13.21"
   },
   "engines": {
     "node": ">=14.0.0",
