@@ -1,0 +1,62 @@
+{
+    "name": "xstr-me/api-spec",
+    "type": "library",
+    "description": "OpenAPI specification for XStr.me services - PHP/Composer package",
+    "keywords": ["openapi", "api", "specification", "xstr", "swagger", "rest", "php", "symfony"],
+    "homepage": "https://github.com/xstr-me/api-spec",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "XStr.me Team",
+            "homepage": "https://github.com/xstr-me"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/xstr-me/api-spec/issues",
+        "source": "https://github.com/xstr-me/api-spec"
+    },
+    "require": {
+        "php": ">=8.1",
+        "symfony/yaml": "^6.0|^7.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.0|^11.0",
+        "symfony/console": "^6.0|^7.0",
+        "cebe/openapi": "^1.7",
+        "phpstan/phpstan": "^1.10"
+    },
+    "autoload": {
+        "psr-4": {
+            "XstrMe\\ApiSpec\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "XstrMe\\ApiSpec\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "analyse": "phpstan analyse src tests --level=8",
+        "validate-spec": "php bin/validate-spec.php",
+        "all": [
+            "@validate-spec",
+            "@analyse",
+            "@test"
+        ]
+    },
+    "extra": {
+        "symfony": {
+            "allow-contrib": false,
+            "require": "^6.0|^7.0"
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "symfony/flex": true
+        }
+    }
+}

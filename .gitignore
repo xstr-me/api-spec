@@ -60,3 +60,13 @@ secring.*
 .env.development.local
 .env.test.local
 .env.production.local
+
+# PHP
+/vendor/
+composer.lock
+.phpunit.result.cache
+/build/
+/coverage/
+*.cache
+.php-cs-fixer.cache
+.phpstan.cache
