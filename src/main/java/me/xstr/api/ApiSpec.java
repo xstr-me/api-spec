@@ -8,8 +8,7 @@ import java.nio.charset.StandardCharsets;
  * Utility class for accessing the XStr.me API specification.
  *  * This class provides convenient methods to load and access the OpenAPI
  * specification that is bundled with this JAR.
- * 
- * @version 1.0.0
+ *  * @version 0.0.1-alpha
  */
 public class ApiSpec {
     
@@ -48,14 +47,20 @@ public class ApiSpec {
             return new String(stream.readAllBytes(), StandardCharsets.UTF_8);
         }
     }
-    
-    /**
+      /**
      * Get the version of the API specification.
      * 
      * @return API specification version
      */
     public static String getVersion() {
-        return "1.0.0";
+        // Try to read version from package implementation version first
+        Package pkg = ApiSpec.class.getPackage();
+        if (pkg != null && pkg.getImplementationVersion() != null) {
+            return pkg.getImplementationVersion();
+        }
+        
+        // Fallback to current version if package info not available
+        return "0.0.1-alpha";
     }
     
     /**
