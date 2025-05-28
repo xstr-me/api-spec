@@ -4,7 +4,8 @@ info:
   description: |
     OpenAPI specification for XStr.me services.
     
-    This API provides endpoints for managing and accessing XStr.me functionality.  version: 1.0.0
+    This API provides endpoints for managing and accessing XStr.me functionality.
+  version: "0.0.1-alpha"
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
@@ -75,11 +76,10 @@ components:
           description: API version
         uptime:
           type: string
-          description: API uptime duration
-      example:
+          description: API uptime duration      example:
         status: healthy
         timestamp: "2025-05-27T10:30:00Z"
-        version: "1.0.0"
+        version: "0.0.1-alpha"
         uptime: "2d 5h 30m"
 
     VersionResponse:
@@ -97,9 +97,8 @@ components:
         timestamp:
           type: string
           format: date-time
-          description: Build timestamp
-      example:
-        version: "1.0.0"
+          description: Build timestamp      example:
+        version: "0.0.1-alpha"
         build: "abc123def"
         timestamp: "2025-05-27T08:00:00Z"
 
