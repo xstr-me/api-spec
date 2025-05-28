@@ -5,10 +5,10 @@ This repository contains the OpenAPI specification for XStr.me services, distrib
 ## Overview
 
 The API specification is available in multiple formats and can be consumed through:
-- **Maven Central**: `me.xstr:api-spec:1.0.0`
-- **NPM**: `@xstr-me/api-spec@1.0.0`
-- **Packagist**: `xstr-me/api-spec:^1.0`
-- **PyPI**: `xstr-me-api-spec==1.0.0`
+- **Maven Central**: `me.xstr:api-spec:0.0.1-alpha`
+- **NPM**: `@xstr-me/api-spec@0.0.1-alpha`
+- **Packagist**: `xstr-me/api-spec:dev-develop`
+- **PyPI**: `xstr-me-api-spec==0.0.1a1`
 
 ## Installation
 
@@ -20,7 +20,7 @@ Add to your `pom.xml`:
 <dependency>
     <groupId>me.xstr</groupId>
     <artifactId>api-spec</artifactId>
-    <version>1.0.0</version>
+    <version>0.0.1-alpha</version>
 </dependency>
 ```
 
@@ -410,12 +410,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Changelog
 
-### v1.0.0
-- Initial release with basic health and version endpoints
-- Maven Central and NPM distribution support
+### v0.0.1-alpha
+- Initial alpha release with basic health and version endpoints
+- Maven Central and NPM distribution support with alpha versioning
 - **NEW: PHP/Composer distribution support with Symfony integration**
 - **NEW: Python/PyPI distribution support with comprehensive API access**
 - Automated publishing workflows for all four platforms
+- Pre-release alpha versioning to reflect development status
 
 ## Contributors
 
