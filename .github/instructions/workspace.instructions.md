@@ -16,5 +16,14 @@ When completing features or bugfixes, generate documentation at the end:
 5. If no specific feature name or issue reference, use descriptive name: `{DESCRIPTION}.md`
 6. Commit the renamed file in the changelogs directory
 
+## Git Branch Rules
+Follow these branch protection and workflow rules:
+- **Protected Branches**: `develop` and `master` are protected and should not have any direct commits - only merge requests (MRs) are allowed
+- **Default Branch**: `develop` is the default branch for new feature development
+- **Develop Branch**: Only accepts squashed merge requests from `feat/*` branches to maintain clean history
+- **Master Branch**: Only accepts merge requests from `release/*` branches for production releases
+- **Feature Development**: Create `feat/*` branches from `develop` and merge back to `develop`
+- **Release Process**: Create `release/*` branches from `develop` and merge to `master` when ready for production
+
 ## General Guidelines
 Coding standards, domain knowledge, and preferences that AI should follow.
