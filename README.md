@@ -1,6 +1,6 @@
 # XStr.me API Specification
 
-This repository contains the OpenAPI specification for XStr.me services, distributed as Maven, NPM, and Composer packages.
+This repository contains the OpenAPI specification for XStr.me services, distributed as Maven, NPM, Composer, and PyPI packages.
 
 ## Overview
 
@@ -8,6 +8,7 @@ The API specification is available in multiple formats and can be consumed throu
 - **Maven Central**: `me.xstr:api-spec:1.0.0`
 - **NPM**: `@xstr-me/api-spec@1.0.0`
 - **Packagist**: `xstr-me/api-spec:^1.0`
+- **PyPI**: `xstr-me-api-spec==1.0.0`
 
 ## Installation
 
@@ -39,6 +40,12 @@ yarn add @xstr-me/api-spec
 
 ```bash
 composer require xstr-me/api-spec
+```
+
+### Python/PyPI
+
+```bash
+pip install xstr-me-api-spec
 ```
 
 ## Usage
@@ -111,6 +118,30 @@ public function getApiInfo(): array
 }
 ```
 
+#### In Python/PyPI projects:
+```python
+from xstr_me_api_spec import ApiSpec
+
+# Get the specification as dictionary
+spec = ApiSpec.get_api_spec_as_dict()
+
+# Get as YAML string
+yaml_content = ApiSpec.get_api_spec_as_yaml()
+
+# Get as JSON string
+json_content = ApiSpec.get_api_spec_as_json()
+
+# Get specific information
+version = ApiSpec.get_api_version()
+title = ApiSpec.get_api_title()
+description = ApiSpec.get_api_description()
+servers = ApiSpec.get_servers()
+paths = ApiSpec.get_paths()
+
+# Get formatted JSON with indentation
+formatted_json = ApiSpec.get_api_spec_as_json(indent=2)
+```
+
 ## Development
 
 ### Prerequisites
@@ -118,9 +149,11 @@ public function getApiInfo(): array
 - **Java 11+** (for Maven publishing)
 - **Node.js 14+** (for NPM publishing)
 - **PHP 8.1+** (for Composer publishing)
+- **Python 3.8+** (for PyPI publishing)
 - **Maven 3.6+**
 - **NPM 6+**
 - **Composer 2.0+**
+- **pip 21.0+**
 
 ### Setup
 
@@ -138,6 +171,11 @@ npm install
 3. Install PHP dependencies:
 ```bash
 composer install
+```
+
+4. Install Python dependencies:
+```bash
+pip install -r requirements-dev.txt
 ```
 
 ### Validation and Testing
@@ -180,6 +218,33 @@ composer run-script test
 composer run-script all
 ```
 
+#### Python validation and testing:
+```bash
+# Install dependencies
+pip install -r requirements-dev.txt
+
+# Run tests
+python -m pytest
+
+# Run tests with coverage
+python -m pytest --cov=xstr_me_api_spec --cov-report=term-missing
+
+# Type checking with MyPy
+python -m mypy src/python/xstr_me_api_spec
+
+# Code formatting with Black
+python -m black src/python/ tests/python/
+
+# Linting with Flake8
+python -m flake8 src/python/ tests/python/
+
+# Build package
+python -m build
+
+# Run all Python checks
+python -m pytest && python -m mypy src/python/xstr_me_api_spec && python -m flake8 src/python/ tests/python/
+```
+
 ### Publishing
 
 #### Prerequisites for Publishing
@@ -197,6 +262,11 @@ composer run-script all
    - Packagist account
    - Repository webhook configured
    - Package submitted to Packagist
+
+4. **PyPI Requirements**:
+   - PyPI account
+   - API token configured
+   - Login with `twine` or configure credentials
 
 #### Maven Central Publishing
 
@@ -246,12 +316,29 @@ git push origin v1.1.0
 # Or manually trigger update on Packagist website
 ```
 
+#### PyPI Publishing
+
+1. Build the package:
+```bash
+python -m build
+```
+
+2. Upload to PyPI:
+```bash
+# Upload to test PyPI first
+python -m twine upload --repository testpypi dist/*
+
+# Upload to production PyPI
+python -m twine upload dist/*
+```
+
 #### Combined Publishing
 
 Use the convenience script:
 ```bash
 npm run publish-maven && npm publish
 # For PHP, just push tags - Packagist auto-updates
+# For Python: python -m build && python -m twine upload dist/*
 ```
 
 ## API Documentation
@@ -275,19 +362,34 @@ The API specification includes:
 ├── pom.xml               # Maven configuration
 ├── package.json          # NPM configuration
 ├── composer.json         # PHP/Composer configuration
+├── pyproject.toml        # Python packaging configuration
+├── requirements.txt      # Python runtime dependencies
+├── requirements-dev.txt  # Python development dependencies
+├── pytest.ini           # Python test configuration
 ├── README.md             # This file
 ├── LICENSE               # MIT license
 ├── src/                  # Source code
 │   ├── ApiSpec.php       # PHP utility class
+│   ├── python/           # Python package
+│   │   └── xstr_me_api_spec/
+│   │       ├── __init__.py
+│   │       ├── api_spec.py
+│   │       └── api-spec.yml
 │   ├── Symfony/          # Symfony integration
 │   └── main/java/        # Java source code
-├── tests/                # PHP tests
+├── tests/                # Tests
+│   ├── ApiSpecTest.php   # PHP tests
+│   ├── python/           # Python tests
+│   │   ├── __init__.py
+│   │   └── test_api_spec.py
+│   └── Symfony/          # Symfony tests
 ├── bin/                  # PHP command-line tools
 ├── .github/
 │   └── workflows/
 │       ├── maven-publish.yml    # Maven publishing workflow
 │       ├── npm-publish.yml      # NPM publishing workflow
-│       └── php-ci.yml           # PHP CI and Packagist workflow
+│       ├── php-ci.yml           # PHP CI and Packagist workflow
+│       └── python-ci.yml        # Python CI and PyPI workflow
 └── docs/                 # Generated documentation
     └── index.html        # ReDoc documentation
 ```
@@ -312,7 +414,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Initial release with basic health and version endpoints
 - Maven Central and NPM distribution support
 - **NEW: PHP/Composer distribution support with Symfony integration**
-- Automated publishing workflows for all three platforms
+- **NEW: Python/PyPI distribution support with comprehensive API access**
+- Automated publishing workflows for all four platforms
 
 ## Contributors
 
