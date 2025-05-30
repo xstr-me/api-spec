@@ -47,8 +47,13 @@ When completing features or bugfixes, generate documentation at the end:
 
 ## GitHub CLI Integration
 Use GitHub CLI (`gh`) for all GitHub operations:
-- **Create Issues**: `gh issue create --title "Title" --body "Description" --label "feature"`
-- **Create PRs**: `gh pr create --title "Title" --body "Description" --base develop`
+- **Create Issues**: Always use `--body-file` instead of `--body` for descriptions
+  - Create issue body file first: `issue-body.md`
+  - Use: `gh issue create --title "Title" --body-file issue-body.md --label "feature"`
+- **Create PRs**: Always use `--body-file` instead of `--body` for descriptions
+  - Create PR body file first: `pr-body.md`
+  - Use: `gh pr create --title "Title" --body-file pr-body.md --base develop`
+- **Edit Issues**: Use `gh issue edit {number} --body-file issue-body.md` to add descriptions
 - **List Issues**: `gh issue list` to check existing issues
 - **View Issue**: `gh issue view {number}` to see issue details
 
