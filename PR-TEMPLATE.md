@@ -1,11 +1,11 @@
 # Pull Request: Java Client Code Generation
 
-**Closes #[ISSUE-NUMBER]** - Implement Java Client Code Generation from OpenAPI Specification
+**Closes #13** - Implement Java Client Code Generation from OpenAPI Specification
 
 ## 🎯 Feature Overview
 This PR implements comprehensive Java client code generation from the OpenAPI specification using Maven OpenAPI Generator plugin. This enables automatic generation of type-safe Java client libraries directly from our `api-spec.yml`.
 
-**Related Issue:** #[ISSUE-NUMBER] - Java Client Code Generation Implementation
+**Related Issue:** #13 - Implement Java Client Code Generation from OpenAPI Specification
 
 ## 📋 Changes Summary
 
