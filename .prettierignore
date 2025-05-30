@@ -1,0 +1,46 @@
+# Prettier ignore patterns
+node_modules/
+dist/
+coverage/
+target/
+.nyc_output/
+*.min.js
+*.min.css
+*.log
+.git/
+.vscode/
+.idea/
+
+# Build artifacts
+*.tsbuildinfo
+*.map
+
+# Generated documentation
+docs/api/
+
+# Maven artifacts
+*.jar
+*.war
+*.ear
+*.zip
+
+# Python artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+build/
+dist/
+
+# Composer artifacts
+vendor/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,12 @@
+{
+  "*.{ts,js,json}": [
+    "eslint --fix",
+    "prettier --write"
+  ],
+  "*.{md,yml,yaml}": [
+    "prettier --write"
+  ],
+  "src/**/*.ts": [
+    "npm run type-check"
+  ]
+}
