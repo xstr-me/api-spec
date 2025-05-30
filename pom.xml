@@ -149,12 +149,15 @@
                             <output>${project.build.directory}/generated-sources/java-client</output>
                             <apiPackage>me.xstr.api.client.api</apiPackage>
                             <modelPackage>me.xstr.api.client.model</modelPackage>
-                            <invokerPackage>me.xstr.api.client</invokerPackage>
-                            <configOptions>
+                            <invokerPackage>me.xstr.api.client</invokerPackage>                            <configOptions>
                                 <library>okhttp-gson</library>
                                 <dateLibrary>java8</dateLibrary>
                                 <java8>true</java8>
                                 <hideGenerationTimestamp>true</hideGenerationTimestamp>
+                                <generateApiDocumentation>true</generateApiDocumentation>
+                                <generateModelDocumentation>true</generateModelDocumentation>
+                                <withXml>false</withXml>
+                                <serializableModel>true</serializableModel>
                             </configOptions>
                         </configuration>
                     </execution>
@@ -243,11 +246,20 @@
                         <goals>
                             <goal>jar</goal>
                         </goals>
-                    </execution>
-                </executions>
+                    </execution>                </executions>
                 <configuration>
                     <source>11</source>
                     <target>11</target>
+                    <!-- Suppress warnings for generated code -->
+                    <doclint>none</doclint>
+                    <failOnError>false</failOnError>
+                    <failOnWarnings>false</failOnWarnings>
+                    <!-- Exclude generated sources from strict Javadoc checking -->
+                    <excludePackageNames>me.xstr.api.client.*</excludePackageNames>
+                    <additionalJOptions>
+                        <additionalJOption>-Xdoclint:none</additionalJOption>
+                        <additionalJOption>-quiet</additionalJOption>
+                    </additionalJOptions>
                 </configuration>
             </plugin>
 
