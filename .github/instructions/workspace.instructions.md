@@ -16,6 +16,25 @@ When completing features or bugfixes, generate documentation at the end:
 5. If no specific feature name or issue reference, use descriptive name: `{DESCRIPTION}.md`
 6. Commit the renamed file in the changelogs directory
 
+## Issue and PR Workflow
+**MANDATORY**: Every feature or bugfix MUST follow this workflow:
+1. **Create Issue First**: Always create a GitHub issue before starting work
+   - Use GitHub CLI (`gh issue create`) for issue creation
+   - Use descriptive title and detailed description
+   - Add appropriate labels (feature, bug, enhancement, etc.)
+   - If no description provided by user, create comprehensive issue description
+2. **Create Feature Branch**: Branch from `develop` using format `feat/ISSUE-{number}-{short-description}`
+3. **Reference Issue**: All commits should reference the issue number
+4. **Create PR**: Use GitHub CLI (`gh pr create`) and MUST close the issue using "Closes #X" or "Fixes #X"
+5. **Documentation**: Include issue reference in changelog documentation
+
+## GitHub CLI Integration
+Use GitHub CLI (`gh`) for all GitHub operations:
+- **Create Issues**: `gh issue create --title "Title" --body "Description" --label "feature"`
+- **Create PRs**: `gh pr create --title "Title" --body "Description" --base develop`
+- **List Issues**: `gh issue list` to check existing issues
+- **View Issue**: `gh issue view {number}` to see issue details
+
 ## Git Branch Rules
 Follow these branch protection and workflow rules:
 - **Protected Branches**: `develop` and `master` are protected and should not have any direct commits - only merge requests (MRs) are allowed
