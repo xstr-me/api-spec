@@ -3,7 +3,8 @@
 **Date:** May 30, 2025  
 **Branch:** `feat/java-code-generation`  
 **Status:** ✅ **COMPLETE & READY FOR PR**  
-**Issue Reference:** See `changelogs/ISSUE-CODE-GENERATION.md`
+**Issue Reference:** Closes #[ISSUE-NUMBER] - Java Client Code Generation Implementation  
+**GitHub Issue Template:** See `GITHUB-ISSUE-TEMPLATE.md`
 
 ## 🎯 Implementation Summary
 
