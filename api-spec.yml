@@ -73,7 +73,7 @@ components:
           description: Timestamp of the health check
         version:
           type: string
-                  description: API version
+          description: API version
         uptime:
           type: string
           description: API uptime duration
@@ -99,7 +99,8 @@ components:
         timestamp:
           type: string
           format: date-time
-          description: Build timestamp      example:
+          description: Build timestamp
+      example:
         version: "0.0.1-alpha"
         build: "abc123def"
         timestamp: "2025-05-27T08:00:00Z"
