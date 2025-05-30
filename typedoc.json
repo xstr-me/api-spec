@@ -1,0 +1,46 @@
+{
+  "entryPoints": ["src/typescript/index.ts"],
+  "out": "docs/api",
+  "theme": "default",
+  "name": "XStr.me API Specification - TypeScript Package",
+  "includeVersion": true,
+  "excludeExternals": true,
+  "excludePrivate": true,
+  "excludeProtected": false,
+  "disableSources": false,
+  "sourceLinkTemplate": "https://github.com/xstr-me/api-spec/blob/{gitRevision}/{path}#L{line}",
+  "gitRevision": "develop",
+  "readme": "README.md",
+  "categorizeByGroup": true,
+  "defaultCategory": "API",
+  "categoryOrder": [
+    "API",
+    "Types",
+    "Utilities",
+    "*"
+  ],
+  "sort": ["source-order"],
+  "kindSortOrder": [
+    "Module",
+    "Namespace",
+    "Enum",
+    "Class",
+    "Interface",
+    "Type alias",
+    "Constructor",
+    "Property",
+    "Method",
+    "Function",
+    "Variable"
+  ],
+  "navigation": {
+    "includeCategories": true,
+    "includeGroups": true
+  },
+  "markdownItOptions": {
+    "html": true,
+    "linkify": true,
+    "typographer": true
+  },
+  "plugin": ["typedoc-plugin-markdown"]
+}
