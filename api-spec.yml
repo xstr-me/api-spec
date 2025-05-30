@@ -73,10 +73,12 @@ components:
           description: Timestamp of the health check
         version:
           type: string
-          description: API version
+                  description: API version
         uptime:
           type: string
-          description: API uptime duration      example:
+          description: API uptime duration
+          example: "2d 5h 30m"
+      example:
         status: healthy
         timestamp: "2025-05-27T10:30:00Z"
         version: "0.0.1-alpha"

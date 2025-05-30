@@ -22,13 +22,87 @@
         <url>https://github.com/xstr-me/api-spec</url>
         <connection>scm:git:git://github.com/xstr-me/api-spec.git</connection>
         <developerConnection>scm:git:ssh://github.com/xstr-me/api-spec.git</developerConnection>
-    </scm>
-
-    <properties>
+    </scm>    <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jackson.version>2.15.2</jackson.version>
+        <spring.boot.version>2.7.14</spring.boot.version>
+        <swagger.annotations.version>2.2.15</swagger.annotations.version>
     </properties>
+
+    <dependencies>
+        <!-- Jackson for JSON processing -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+
+        <!-- Swagger annotations -->
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>${swagger.annotations.version}</version>
+        </dependency>
+
+        <!-- HTTP client -->
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>4.11.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>logging-interceptor</artifactId>
+            <version>4.11.0</version>
+        </dependency>
+
+        <!-- Gson for JSON processing (alternative) -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
+        </dependency>
+
+        <!-- Spring Web for server stubs -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>5.3.23</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Bean Validation API -->
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>2.0.1.Final</version>
+        </dependency>
+
+        <!-- JUnit for testing -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.9.3</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
     <build>
         <resources>
@@ -40,9 +114,48 @@
                     <include>**/*.json</include>
                 </includes>
             </resource>
-        </resources>
+        </resources>        <plugins>            <!-- OpenAPI Generator Maven Plugin -->
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>7.1.0</version>
+                <executions>
+                    <!-- Generate Java Client -->
+                    <execution>
+                        <id>generate-java-client</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/api-spec.yml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <output>${project.build.directory}/generated-sources/java-client</output>
+                            <apiPackage>me.xstr.api.client.api</apiPackage>
+                            <modelPackage>me.xstr.api.client.model</modelPackage>
+                            <invokerPackage>me.xstr.api.client</invokerPackage>
+                            <groupId>me.xstr</groupId>
+                            <artifactId>xstr-api-client</artifactId>
+                            <artifactVersion>0.0.1-alpha</artifactVersion>
+                            <configOptions>
+                                <library>okhttp-gson</library>
+                                <dateLibrary>java8</dateLibrary>
+                                <java8>true</java8>
+                                <serializationLibrary>gson</serializationLibrary>
+                                <hideGenerationTimestamp>true</hideGenerationTimestamp>
+                                <useBeanValidation>true</useBeanValidation>
+                                <performBeanValidation>true</performBeanValidation>
+                                <serializableModel>true</serializableModel>
+                                <openApiNullable>false</openApiNullable>
+                            </configOptions>
+                            <generateApiTests>true</generateApiTests>
+                            <generateModelTests>true</generateModelTests>
+                            <generateApiDocumentation>true</generateApiDocumentation>
+                            <generateModelDocumentation>true</generateModelDocumentation>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
-        <plugins>
             <!-- Maven Compiler Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -51,7 +164,25 @@
                 <configuration>
                     <source>11</source>
                     <target>11</target>
-                </configuration>
+                </configuration>            </plugin>            <!-- Build Helper Plugin to add generated sources -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.4.0</version>
+                <executions>
+                    <execution>
+                        <id>add-generated-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/java-client/src/main/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <!-- Maven Resources Plugin -->
