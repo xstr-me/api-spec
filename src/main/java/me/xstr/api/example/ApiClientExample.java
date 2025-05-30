@@ -1,6 +1,7 @@
 package me.xstr.api.example;
 
 import me.xstr.api.client.ApiClient;
+import me.xstr.api.client.Configuration;
 import me.xstr.api.client.api.HealthApi;
 import me.xstr.api.client.api.InfoApi;
 import me.xstr.api.client.model.HealthResponse;
