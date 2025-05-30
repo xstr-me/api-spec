@@ -7,6 +7,23 @@ Always check if the user is on Windows or Linux before generating any commands o
 - For Linux: Use bash commands, forward slash path separators (/), and Linux-specific tools
 - When in doubt, ask the user about their operating system
 
+## Command Line Best Practices
+To prevent getting stuck in pagers or interactive modes:
+- **Git pager settings**:
+  - Windows cmd.exe: Use `set GIT_PAGER=` to disable pager for session
+  - Linux/bash: Use `export GIT_PAGER=cat` or `git --no-pager` prefix
+- **Git commands**: Always use `git --no-pager` or pipe to `| cat` for commands that might use a pager (e.g., `git log`, `git show`, `git diff`)
+- **Other pager commands**: For commands like `less`, `more`, `man`, etc., always pipe output to `| cat` or use appropriate flags to disable paging
+- **Long output**: Use `head` or `tail` to limit output when commands might produce excessively large results
+- **Windows-specific**: 
+  - Use `set GIT_PAGER=` before running git commands that might use pager
+  - Use backslash `\` for file paths
+  - Use `&&` for command chaining in cmd.exe
+- **Examples**: 
+  - `git --no-pager branch -a` instead of `git branch -a`
+  - `git --no-pager log --oneline` instead of `git log --oneline`
+  - `git --no-pager status` instead of `git status`
+
 ## Project Documentation Standards
 When completing features or bugfixes, generate documentation at the end:
 1. Create the documentation file after completing the feature/bugfix work
