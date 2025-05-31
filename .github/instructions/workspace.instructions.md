@@ -24,6 +24,22 @@ To prevent getting stuck in pagers or interactive modes:
   - `git --no-pager log --oneline` instead of `git log --oneline`
   - `git --no-pager status` instead of `git status`
 
+## Git Commit Message Best Practices
+**CRITICAL**: Multi-line commit messages require special handling in Windows cmd.exe:
+- **Single-line commits**: Use simple quoted strings: `git commit -m "Short message"`
+- **Multi-line commits**: Use double quotes and escape properly for Windows cmd.exe
+- **Windows cmd.exe format**: `git commit -m "Title^
+
+^
+- Bullet point 1^
+- Bullet point 2^
+- Bullet point 3"`
+- **Alternative**: Use separate commands for complex commits:
+  1. `git commit -m "Title"`
+  2. `git commit --amend -m "Title" -m "- Detail 1" -m "- Detail 2" -m "- Detail 3"`
+- **Best Practice**: Keep commit titles under 50 characters, details under 72 characters per line
+- **Avoid**: Using `&&` or line breaks that break in Windows cmd.exe terminal execution
+
 ## Project Documentation Standards
 When completing features or bugfixes, generate documentation at the end:
 1. Create the documentation file after completing the feature/bugfix work
