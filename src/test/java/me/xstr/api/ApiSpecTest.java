@@ -3,12 +3,21 @@ package me.xstr.api;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.EmptySource;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 
 import java.io.InputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Comprehensive unit tests for the ApiSpec utility class.
@@ -41,21 +50,25 @@ class ApiSpecTest {
                 exception.getCause().getMessage(),
                 "Error message should match expected text");
         }
-    }
-
-    @Nested
+    }    @Nested
     @DisplayName("API Specification Availability Tests")
     class AvailabilityTests {
         
         @Test
         @DisplayName("Should confirm API specification is available")
         void shouldConfirmApiSpecIsAvailable() {
-            assertTrue(ApiSpec.isAvailable(), 
-                "API specification should be available in classpath");
+            // Using AssertJ for fluent assertions
+            assertThat(ApiSpec.isAvailable())
+                .as("API specification should be available in classpath")
+                .isTrue();
         }
-    }
-
-    @Nested
+        
+        @RepeatedTest(value = 5, name = "Repeated test {currentRepetition}/{totalRepetitions}")
+        @DisplayName("Should consistently return true for availability")
+        void shouldConsistentlyReturnTrueForAvailability() {
+            assertThat(ApiSpec.isAvailable()).isTrue();
+        }
+    }    @Nested
     @DisplayName("API Specification Stream Tests")
     class StreamTests {
         
@@ -64,9 +77,14 @@ class ApiSpecTest {
         void shouldReturnValidInputStream() {
             InputStream stream = ApiSpec.getApiSpecAsStream();
             
-            assertNotNull(stream, "InputStream should not be null");
-            assertDoesNotThrow(stream::available, 
-                "InputStream should be readable");
+            // Using AssertJ for better assertions
+            assertThat(stream)
+                .as("InputStream should not be null")
+                .isNotNull();
+            
+            assertThatCode(stream::available)
+                .as("InputStream should be readable")
+                .doesNotThrowAnyException();
         }
         
         @Test
@@ -75,12 +93,21 @@ class ApiSpecTest {
             InputStream stream1 = ApiSpec.getApiSpecAsStream();
             InputStream stream2 = ApiSpec.getApiSpecAsStream();
             
-            assertNotSame(stream1, stream2, 
-                "Multiple calls should return different InputStream instances");
+            assertThat(stream1)
+                .as("Multiple calls should return different InputStream instances")
+                .isNotSameAs(stream2);
         }
-    }
-
-    @Nested
+        
+        @ParameterizedTest
+        @ValueSource(ints = {1, 2, 3, 5, 10})
+        @DisplayName("Should return valid streams for multiple concurrent calls")
+        void shouldReturnValidStreamsForMultipleCalls(int numberOfCalls) {
+            for (int i = 0; i < numberOfCalls; i++) {
+                InputStream stream = ApiSpec.getApiSpecAsStream();
+                assertThat(stream).isNotNull();
+            }
+        }
+    }    @Nested
     @DisplayName("API Specification String Tests")
     class StringTests {
         
@@ -89,14 +116,18 @@ class ApiSpecTest {
         void shouldReturnValidYamlContent() throws IOException {
             String content = ApiSpec.getApiSpecAsString();
             
-            assertNotNull(content, "Content should not be null");
-            assertFalse(content.trim().isEmpty(), "Content should not be empty");
-            assertTrue(content.contains("openapi:"), 
-                "Content should contain OpenAPI specification marker");
-            assertTrue(content.contains("info:"), 
-                "Content should contain info section");
-            assertTrue(content.contains("paths:"), 
-                "Content should contain paths section");
+            // Using AssertJ for fluent assertions
+            assertThat(content)
+                .as("Content should not be null")
+                .isNotNull()
+                .as("Content should not be empty")
+                .isNotBlank()
+                .as("Content should contain OpenAPI specification marker")
+                .contains("openapi:")
+                .as("Content should contain info section")
+                .contains("info:")
+                .as("Content should contain paths section")
+                .contains("paths:");
         }
         
         @Test
@@ -105,8 +136,9 @@ class ApiSpecTest {
             String content1 = ApiSpec.getApiSpecAsString();
             String content2 = ApiSpec.getApiSpecAsString();
             
-            assertEquals(content1, content2, 
-                "Multiple calls should return identical content");
+            assertThat(content1)
+                .as("Multiple calls should return identical content")
+                .isEqualTo(content2);
         }
         
         @Test
@@ -115,12 +147,30 @@ class ApiSpecTest {
             String content = ApiSpec.getApiSpecAsString();
             
             // The YAML should contain the version information
-            assertTrue(content.contains("version:") || content.contains("\"version\""),
-                "Content should contain version information");
+            assertThat(content)
+                .as("Content should contain version information")
+                .satisfiesAnyOf(
+                    c -> assertThat(c).contains("version:"),
+                    c -> assertThat(c).contains("\"version\"")
+                );
         }
-    }
-
-    @Nested
+        
+        @ParameterizedTest
+        @CsvSource({
+            "'openapi:', 'OpenAPI specification marker'",
+            "'info:', 'API info section'",
+            "'paths:', 'API paths section'",
+            "'version', 'version information'"
+        })
+        @DisplayName("Should contain expected YAML sections")
+        void shouldContainExpectedYamlSections(String expectedContent, String description) throws IOException {
+            String content = ApiSpec.getApiSpecAsString();
+            
+            assertThat(content)
+                .as("Content should contain " + description)
+                .contains(expectedContent);
+        }
+    }    @Nested
     @DisplayName("Version Information Tests")
     class VersionTests {
         
@@ -129,8 +179,11 @@ class ApiSpecTest {
         void shouldReturnValidVersionString() {
             String version = ApiSpec.getVersion();
             
-            assertNotNull(version, "Version should not be null");
-            assertFalse(version.trim().isEmpty(), "Version should not be empty");
+            assertThat(version)
+                .as("Version should not be null")
+                .isNotNull()
+                .as("Version should not be empty")
+                .isNotBlank();
         }
         
         @Test
@@ -139,8 +192,9 @@ class ApiSpecTest {
             String version1 = ApiSpec.getVersion();
             String version2 = ApiSpec.getVersion();
             
-            assertEquals(version1, version2, 
-                "Multiple calls should return same version");
+            assertThat(version1)
+                .as("Multiple calls should return same version")
+                .isEqualTo(version2);
         }
         
         @Test
@@ -149,9 +203,28 @@ class ApiSpecTest {
             String version = ApiSpec.getVersion();
             
             // Should either be from manifest or fallback to alpha version
-            assertTrue(version.matches("\\d+\\.\\d+\\.\\d+.*") || 
-                      version.equals("0.0.1-alpha"),
-                "Version should follow semantic versioning or be alpha fallback");
+            assertThat(version)
+                .as("Version should follow semantic versioning or be alpha fallback")
+                .satisfiesAnyOf(
+                    v -> assertThat(v).matches("\\d+\\.\\d+\\.\\d+.*"),
+                    v -> assertThat(v).isEqualTo("0.0.1-alpha")
+                );
+        }
+        
+        @ParameterizedTest
+        @NullSource
+        @EmptySource
+        @ValueSource(strings = {"", "   ", "\t", "\n"})
+        @DisplayName("Should never return null or blank version")
+        void shouldNeverReturnNullOrBlankVersion(String ignoredInput) {
+            // This test validates that regardless of input conditions,
+            // the version method always returns a valid string
+            String version = ApiSpec.getVersion();
+            
+            assertThat(version)
+                .as("Version should never be null or blank")
+                .isNotNull()
+                .isNotBlank();
         }
     }
 
@@ -177,21 +250,45 @@ class ApiSpecTest {
             String version = ApiSpec.getVersion();
             assertNotNull(version, "Version should be available");
         }
-    }
-
-    @Nested
+    }    @Nested
     @DisplayName("Performance Tests")
     class PerformanceTests {
+        
+        private final AtomicInteger callCounter = new AtomicInteger(0);
         
         @Test
         @DisplayName("Should handle multiple rapid calls efficiently")
         void shouldHandleMultipleRapidCalls() {
             // Test that multiple rapid calls don't cause issues
             for (int i = 0; i < 100; i++) {
-                assertTrue(ApiSpec.isAvailable());
-                assertNotNull(ApiSpec.getVersion());
-                assertNotNull(ApiSpec.getApiSpecAsStream());
+                assertThat(ApiSpec.isAvailable()).isTrue();
+                assertThat(ApiSpec.getVersion()).isNotNull();
+                assertThat(ApiSpec.getApiSpecAsStream()).isNotNull();
+                callCounter.incrementAndGet();
             }
+            
+            assertThat(callCounter.get())
+                .as("All calls should have been executed")
+                .isEqualTo(100);
+        }
+        
+        @ParameterizedTest
+        @ValueSource(ints = {10, 50, 100, 200})
+        @DisplayName("Should handle variable load efficiently")
+        void shouldHandleVariableLoadEfficiently(int numberOfCalls) {
+            long startTime = System.nanoTime();
+            
+            for (int i = 0; i < numberOfCalls; i++) {
+                assertThat(ApiSpec.isAvailable()).isTrue();
+            }
+            
+            long endTime = System.nanoTime();
+            long durationMs = (endTime - startTime) / 1_000_000;
+            
+            // Should complete reasonably fast (less than 1 second for any reasonable load)
+            assertThat(durationMs)
+                .as("Operations should complete in reasonable time")
+                .isLessThan(1000);
         }
     }
 }
