@@ -49,13 +49,26 @@ When completing features or bugfixes, generate documentation at the end:
 Use GitHub CLI (`gh`) for all GitHub operations:
 - **Create Issues**: Always use `--body-file` instead of `--body` for descriptions
   - Create issue body file first: `issue-body.md`
+  - **VALIDATION REQUIRED**: Always verify the file exists and contains content before proceeding
   - Use: `gh issue create --title "Title" --body-file issue-body.md --label "feature"`
 - **Create PRs**: Always use `--body-file` instead of `--body` for descriptions
   - Create PR body file first: `pr-body.md`
+  - **VALIDATION REQUIRED**: Always verify the file exists and contains content before proceeding
   - Use: `gh pr create --title "Title" --body-file pr-body.md --base develop`
 - **Edit Issues**: Use `gh issue edit {number} --body-file issue-body.md` to add descriptions
+  - **VALIDATION REQUIRED**: Always verify the file exists and contains content before proceeding
+- **Edit PRs**: Use `gh pr edit {number} --body-file pr-body.md` to update descriptions
+  - **VALIDATION REQUIRED**: Always verify the file exists and contains content before proceeding
 - **List Issues**: `gh issue list` to check existing issues
 - **View Issue**: `gh issue view {number}` to see issue details
+
+### GitHub CLI Validation Checklist
+Before using any `--body-file` command, ALWAYS:
+1. **Check file exists**: Verify the body file (e.g., `issue-body.md`, `pr-body.md`) exists
+2. **Check file content**: Ensure the file contains actual description content (not empty or just comments)
+3. **Read file first**: Use read_file tool to verify content before proceeding with GitHub CLI commands
+4. **Create content if missing**: If file is empty or missing, create proper description content first
+5. **Clean up after use**: Delete temporary body files after GitHub CLI operations - they should NOT be committed to the repository
 
 ## Git Branch Rules
 Follow these branch protection and workflow rules:
