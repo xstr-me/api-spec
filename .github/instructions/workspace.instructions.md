@@ -7,6 +7,23 @@ Always check if the user is on Windows or Linux before generating any commands o
 - For Linux: Use bash commands, forward slash path separators (/), and Linux-specific tools
 - When in doubt, ask the user about their operating system
 
+## Command Line Best Practices
+To prevent getting stuck in pagers or interactive modes:
+- **Git pager settings**:
+  - Windows cmd.exe: Use `set GIT_PAGER=` to disable pager for session
+  - Linux/bash: Use `export GIT_PAGER=cat` or `git --no-pager` prefix
+- **Git commands**: Always use `git --no-pager` or pipe to `| cat` for commands that might use a pager (e.g., `git log`, `git show`, `git diff`)
+- **Other pager commands**: For commands like `less`, `more`, `man`, etc., always pipe output to `| cat` or use appropriate flags to disable paging
+- **Long output**: Use `head` or `tail` to limit output when commands might produce excessively large results
+- **Windows-specific**: 
+  - Use `set GIT_PAGER=` before running git commands that might use pager
+  - Use backslash `\` for file paths
+  - Use `&&` for command chaining in cmd.exe
+- **Examples**: 
+  - `git --no-pager branch -a` instead of `git branch -a`
+  - `git --no-pager log --oneline` instead of `git log --oneline`
+  - `git --no-pager status` instead of `git status`
+
 ## Project Documentation Standards
 When completing features or bugfixes, generate documentation at the end:
 1. Create the documentation file after completing the feature/bugfix work
@@ -30,10 +47,28 @@ When completing features or bugfixes, generate documentation at the end:
 
 ## GitHub CLI Integration
 Use GitHub CLI (`gh`) for all GitHub operations:
-- **Create Issues**: `gh issue create --title "Title" --body "Description" --label "feature"`
-- **Create PRs**: `gh pr create --title "Title" --body "Description" --base develop`
+- **Create Issues**: Always use `--body-file` instead of `--body` for descriptions
+  - Create issue body file first: `issue-body.md`
+  - **VALIDATION REQUIRED**: Always verify the file exists and contains content before proceeding
+  - Use: `gh issue create --title "Title" --body-file issue-body.md --label "feature"`
+- **Create PRs**: Always use `--body-file` instead of `--body` for descriptions
+  - Create PR body file first: `pr-body.md`
+  - **VALIDATION REQUIRED**: Always verify the file exists and contains content before proceeding
+  - Use: `gh pr create --title "Title" --body-file pr-body.md --base develop`
+- **Edit Issues**: Use `gh issue edit {number} --body-file issue-body.md` to add descriptions
+  - **VALIDATION REQUIRED**: Always verify the file exists and contains content before proceeding
+- **Edit PRs**: Use `gh pr edit {number} --body-file pr-body.md` to update descriptions
+  - **VALIDATION REQUIRED**: Always verify the file exists and contains content before proceeding
 - **List Issues**: `gh issue list` to check existing issues
 - **View Issue**: `gh issue view {number}` to see issue details
+
+### GitHub CLI Validation Checklist
+Before using any `--body-file` command, ALWAYS:
+1. **Check file exists**: Verify the body file (e.g., `issue-body.md`, `pr-body.md`) exists
+2. **Check file content**: Ensure the file contains actual description content (not empty or just comments)
+3. **Read file first**: Use read_file tool to verify content before proceeding with GitHub CLI commands
+4. **Create content if missing**: If file is empty or missing, create proper description content first
+5. **Clean up after use**: Delete temporary body files after GitHub CLI operations - they should NOT be committed to the repository
 
 ## Git Branch Rules
 Follow these branch protection and workflow rules:
