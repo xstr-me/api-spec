@@ -14,7 +14,7 @@
     "generateModelTests": true,
     "useBeanValidation": true,
     "performBeanValidation": true,
-    "useJakartaEe": false,
+    "useJakartaEe": true,
     "serializableModel": true,
     "withXml": false,
     "interfaceOnly": true,
