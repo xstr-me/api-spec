@@ -38,15 +38,15 @@
             </roles>
             <timezone>UTC</timezone>
         </developer>
-    </developers>
-
-    <properties>
+    </developers>    <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jackson.version>2.17.2</jackson.version>
         <spring.boot.version>3.5.0</spring.boot.version>
         <swagger.annotations.version>2.2.22</swagger.annotations.version>
+        <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss'Z'</maven.build.timestamp.format>
+        <git.commit.id.abbrev>unknown</git.commit.id.abbrev>
     </properties>
 
     <dependencies>
@@ -135,27 +135,9 @@
             <version>5.10.1</version>
             <scope>test</scope>
         </dependency>
-    </dependencies>
-
-    <issueManagement>
+    </dependencies>    <issueManagement>
         <system>GitHub Issues</system>
-        <url>https://github.com/xstr-me/api-spec/issues</url>
-    </issueManagement>    <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss'Z'</maven.build.timestamp.format>
-        <git.commit.id.abbrev>unknown</git.commit.id.abbrev>
-    </properties>
-
-    <dependencies>        <!-- JUnit 5 for unit testing -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>5.10.1</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+        <url>https://github.com/xstr-me/api-spec/issues</url>    </issueManagement>
 
     <build>
         <resources>

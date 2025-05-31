@@ -85,8 +85,8 @@ Use GitHub CLI (`gh`) for all GitHub operations:
   - **VALIDATION REQUIRED**: Always verify the file exists and contains content before proceeding
 - **Edit PRs**: Use `gh pr edit {number} --body-file pr-body.md` to update descriptions
   - **VALIDATION REQUIRED**: Always verify the file exists and contains content before proceeding
-- **List Issues**: `gh issue list` to check existing issues
-- **View Issue**: `gh issue view {number}` to see issue details
+- **List Issues**: `gh issue list > issues.txt && type issues.txt` to check existing issues (use file redirection for output verification)
+- **View Issue**: `gh issue view {number} > issue-details.txt && type issue-details.txt` to see issue details
 
 ### GitHub CLI Validation Checklist
 Before using any `--body-file` command, ALWAYS:
@@ -97,12 +97,17 @@ Before using any `--body-file` command, ALWAYS:
 5. **Clean up after use**: Delete temporary body files after GitHub CLI operations - they should NOT be committed to the repository
 
 ### GitHub CLI Output Interpretation
-- **Normal Behavior**: GitHub CLI commands may produce output with empty lines at the beginning and end
-- **Success Indication**: Command successful execution is indicated by command completion without error messages
-- **Empty Output**: Some commands (like `gh issue list` on repositories with no issues) may produce minimal or empty output
-- **Formatting**: Empty lines and minimal output are normal GitHub CLI formatting behavior, not errors
-- **IMPORTANT**: Always ignore empty lines in GitHub CLI output - they are normal formatting
-- **When given issue number**: Proceed with implementation even if `gh issue view` shows empty lines - the issue exists
+- **CRITICAL OUTPUT CAPTURE ISSUE**: GitHub CLI commands execute successfully but their output may not be visible in terminal tool results
+- **Verification Required**: When GitHub CLI commands appear to produce no output, use file redirection to verify actual results
+- **Windows cmd.exe Workaround**: Use `gh command > output.txt && type output.txt` to capture and display GitHub CLI output
+- **File Redirection Method**: For validation purposes, redirect output to files: `gh issue list > issues.txt`
+- **Success Indication**: Command successful execution is indicated by command completion without error messages (even with invisible output)
+- **Empty vs Invisible Output**: Distinguish between truly empty output (no issues exist) and invisible output (output capture problem)
+- **Validation Commands**: 
+  - `gh issue list > issues.txt && type issues.txt` - List and display issues
+  - `gh issue view {number} > issue-details.txt && type issue-details.txt` - View and display issue details
+- **IMPORTANT**: Never assume no output means no data - always verify with file redirection when in doubt
+- **When given issue number**: Proceed with implementation - GitHub CLI output capture issues don't indicate missing issues
 
 ## Git Branch Rules
 Follow these branch protection and workflow rules:
