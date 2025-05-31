@@ -176,28 +176,7 @@
                     <source>17</source>
                     <target>17</target>
                 </configuration>
-            </plugin>
-            <!-- Build Helper Plugin to add generated sources -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.4.0</version>
-                <executions>
-                    <execution>
-                        <id>add-generated-source</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>${project.build.directory}/generated-sources/java-client/src/main/java</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                </executions>            </plugin>
-
-            <!-- Build Helper Maven Plugin - Add generated sources to compilation path -->
+            </plugin>            <!-- Build Helper Maven Plugin - Add generated sources to compilation path -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
