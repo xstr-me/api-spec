@@ -69,6 +69,8 @@ When completing features or bugfixes, generate documentation at the end:
 2. **Create Feature Branch**: Branch from `develop` using format `feat/ISSUE-{number}-{short-description}`
 3. **Reference Issue**: All commits should reference the issue number
 4. **Create PR**: Use GitHub CLI (`gh pr create`) and MUST close the issue using "Closes #X" or "Fixes #X"
+   - **CRITICAL**: ALWAYS use `--body-file` with proper content validation (see GitHub CLI Validation Checklist)
+   - **NEVER**: Use `--body` parameter directly - it often results in empty PR bodies
 5. **Documentation**: Include issue reference in changelog documentation
 
 ## GitHub CLI Integration
@@ -95,6 +97,26 @@ Before using any `--body-file` command, ALWAYS:
 3. **Read file first**: Use read_file tool to verify content before proceeding with GitHub CLI commands
 4. **Create content if missing**: If file is empty or missing, create proper description content first
 5. **Clean up after use**: Delete temporary body files after GitHub CLI operations - they should NOT be committed to the repository
+
+#### PR Creation Example Workflow
+```bash
+# 1. Create PR body file with actual content
+echo "## Summary" > pr-body.md
+echo "This PR implements..." >> pr-body.md
+echo "## Changes" >> pr-body.md
+echo "- Added feature X" >> pr-body.md
+echo "## Closes" >> pr-body.md
+echo "Closes #31" >> pr-body.md
+
+# 2. Verify file exists and has content
+type pr-body.md
+
+# 3. Create PR using body file
+gh pr create --title "fix: Issue description" --body-file pr-body.md --base develop
+
+# 4. Clean up temporary file
+del pr-body.md
+```
 
 ### GitHub CLI Output Interpretation
 - **CRITICAL OUTPUT CAPTURE ISSUE**: GitHub CLI commands execute successfully but their output may not be visible in terminal tool results
