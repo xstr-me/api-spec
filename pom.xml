@@ -161,6 +161,8 @@
                                 <generateModelDocumentation>true</generateModelDocumentation>
                                 <withXml>false</withXml>
                                 <serializableModel>true</serializableModel>
+                                <generateModelTests>false</generateModelTests>
+                                <generateApiTests>false</generateApiTests>
                             </configOptions>
                         </configuration>
                     </execution>
@@ -186,8 +188,7 @@
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>add-source</goal>
-                        </goals>
-                        <configuration>
+                        </goals>                        <configuration>
                             <sources>
                                 <source>${project.build.directory}/generated-sources/java-client/src/main/java</source>
                             </sources>
