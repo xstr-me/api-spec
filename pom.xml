@@ -143,8 +143,7 @@
                         <id>generate-java-client</id>
                         <goals>
                             <goal>generate</goal>
-                        </goals>
-                        <configuration>
+                        </goals>                        <configuration>
                             <inputSpec>${project.basedir}/api-spec.yml</inputSpec>
                             <generatorName>java</generatorName>
                             <output>${project.build.directory}/generated-sources/java-client</output>
