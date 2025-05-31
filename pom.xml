@@ -100,13 +100,18 @@
             <artifactId>spring-web</artifactId>
             <version>6.2.0</version>
             <scope>provided</scope>
-        </dependency>
-
-        <!-- Bean Validation API -->
+        </dependency>        <!-- Bean Validation API -->
         <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
             <version>3.0.2</version>
+        </dependency>
+
+        <!-- Hibernate Validator implementation for Jakarta EE -->
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>8.0.1.Final</version>
         </dependency>
 
         <!-- JUnit for testing -->
