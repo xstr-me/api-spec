@@ -16,7 +16,7 @@
     "generateModelDocumentation": true,
     "useBeanValidation": true,
     "performBeanValidation": true,
-    "useJakartaEe": false,
+    "useJakartaEe": true,
     "serializableModel": true,
     "withXml": false,
     "additionalModelTypeAnnotations": "@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)",

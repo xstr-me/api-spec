@@ -24,6 +24,22 @@ To prevent getting stuck in pagers or interactive modes:
   - `git --no-pager log --oneline` instead of `git log --oneline`
   - `git --no-pager status` instead of `git status`
 
+## Git Commit Message Best Practices
+**CRITICAL**: Multi-line commit messages require special handling in Windows cmd.exe:
+- **Single-line commits**: Use simple quoted strings: `git commit -m "Short message"`
+- **Multi-line commits**: Use double quotes and escape properly for Windows cmd.exe
+- **Windows cmd.exe format**: `git commit -m "Title^
+
+^
+- Bullet point 1^
+- Bullet point 2^
+- Bullet point 3"`
+- **Alternative**: Use separate commands for complex commits:
+  1. `git commit -m "Title"`
+  2. `git commit --amend -m "Title" -m "- Detail 1" -m "- Detail 2" -m "- Detail 3"`
+- **Best Practice**: Keep commit titles under 50 characters, details under 72 characters per line
+- **Avoid**: Using `&&` or line breaks that break in Windows cmd.exe terminal execution
+
 ## Project Documentation Standards
 When completing features or bugfixes, generate documentation at the end:
 1. Create the documentation file after completing the feature/bugfix work
@@ -35,11 +51,21 @@ When completing features or bugfixes, generate documentation at the end:
 
 ## Issue and PR Workflow
 **MANDATORY**: Every feature or bugfix MUST follow this workflow:
-1. **Create Issue First**: Always create a GitHub issue before starting work
-   - Use GitHub CLI (`gh issue create`) for issue creation
-   - Use descriptive title and detailed description
-   - Add appropriate labels (feature, bug, enhancement, etc.)
-   - If no description provided by user, create comprehensive issue description
+
+### Issue Management Rules
+- **If given issue number (e.g., "implement issue #27")**: 
+  - Issue already exists - proceed directly to implementation
+  - Do NOT create a new issue
+  - If issue cannot be found, ask for clarification
+- **If no issue number provided**:
+  - Check existing issues first with `gh issue list`
+  - Only create new issue if no matching issue exists
+  - Use GitHub CLI (`gh issue create`) for issue creation
+
+### Workflow Steps
+1. **Issue Verification**: 
+   - If issue number provided: verify it exists, proceed to step 2
+   - If no number: check existing issues, create only if needed
 2. **Create Feature Branch**: Branch from `develop` using format `feat/ISSUE-{number}-{short-description}`
 3. **Reference Issue**: All commits should reference the issue number
 4. **Create PR**: Use GitHub CLI (`gh pr create`) and MUST close the issue using "Closes #X" or "Fixes #X"
@@ -69,6 +95,14 @@ Before using any `--body-file` command, ALWAYS:
 3. **Read file first**: Use read_file tool to verify content before proceeding with GitHub CLI commands
 4. **Create content if missing**: If file is empty or missing, create proper description content first
 5. **Clean up after use**: Delete temporary body files after GitHub CLI operations - they should NOT be committed to the repository
+
+### GitHub CLI Output Interpretation
+- **Normal Behavior**: GitHub CLI commands may produce output with empty lines at the beginning and end
+- **Success Indication**: Command successful execution is indicated by command completion without error messages
+- **Empty Output**: Some commands (like `gh issue list` on repositories with no issues) may produce minimal or empty output
+- **Formatting**: Empty lines and minimal output are normal GitHub CLI formatting behavior, not errors
+- **IMPORTANT**: Always ignore empty lines in GitHub CLI output - they are normal formatting
+- **When given issue number**: Proceed with implementation even if `gh issue view` shows empty lines - the issue exists
 
 ## Git Branch Rules
 Follow these branch protection and workflow rules:
