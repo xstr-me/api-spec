@@ -27,18 +27,23 @@ To prevent getting stuck in pagers or interactive modes:
 ## Git Commit Message Best Practices
 **CRITICAL**: Multi-line commit messages require special handling in Windows cmd.exe:
 - **Single-line commits**: Use simple quoted strings: `git commit -m "Short message"`
-- **Multi-line commits**: Use double quotes and escape properly for Windows cmd.exe
-- **Windows cmd.exe format**: `git commit -m "Title^
+- **Multi-line commits**: Use separate `-m` parameters for each line (RECOMMENDED for Windows cmd.exe)
+- **Windows cmd.exe RECOMMENDED format**: 
+  ```bash
+  git commit -m "Title: Brief description under 50 chars" -m "- Detail 1" -m "- Detail 2" -m "- Detail 3"
+  ```
+- **Alternative Windows cmd.exe format**: Use double quotes and escape properly
+  ```bash
+  git commit -m "Title^
 
 ^
 - Bullet point 1^
 - Bullet point 2^
-- Bullet point 3"`
-- **Alternative**: Use separate commands for complex commits:
-  1. `git commit -m "Title"`
-  2. `git commit --amend -m "Title" -m "- Detail 1" -m "- Detail 2" -m "- Detail 3"`
+- Bullet point 3"
+  ```
 - **Best Practice**: Keep commit titles under 50 characters, details under 72 characters per line
-- **Avoid**: Using `&&` or line breaks that break in Windows cmd.exe terminal execution
+- **AVOID**: Using `&&` or line breaks that break in Windows cmd.exe terminal execution
+- **AVOID**: Complex multi-line strings in single `-m` parameter - use multiple `-m` parameters instead
 
 ## Project Documentation Standards
 When completing features or bugfixes, generate documentation at the end:
@@ -69,6 +74,8 @@ When completing features or bugfixes, generate documentation at the end:
 2. **Create Feature Branch**: Branch from `develop` using format `feat/ISSUE-{number}-{short-description}`
 3. **Reference Issue**: All commits should reference the issue number
 4. **Create PR**: Use GitHub CLI (`gh pr create`) and MUST close the issue using "Closes #X" or "Fixes #X"
+   - **CRITICAL**: ALWAYS use `--body-file` with proper content validation (see GitHub CLI Validation Checklist)
+   - **NEVER**: Use `--body` parameter directly - it often results in empty PR bodies
 5. **Documentation**: Include issue reference in changelog documentation
 
 ## GitHub CLI Integration
@@ -85,8 +92,8 @@ Use GitHub CLI (`gh`) for all GitHub operations:
   - **VALIDATION REQUIRED**: Always verify the file exists and contains content before proceeding
 - **Edit PRs**: Use `gh pr edit {number} --body-file pr-body.md` to update descriptions
   - **VALIDATION REQUIRED**: Always verify the file exists and contains content before proceeding
-- **List Issues**: `gh issue list` to check existing issues
-- **View Issue**: `gh issue view {number}` to see issue details
+- **List Issues**: `gh issue list > issues.txt && type issues.txt` to check existing issues (use file redirection for output verification)
+- **View Issue**: `gh issue view {number} > issue-details.txt && type issue-details.txt` to see issue details
 
 ### GitHub CLI Validation Checklist
 Before using any `--body-file` command, ALWAYS:
@@ -96,13 +103,38 @@ Before using any `--body-file` command, ALWAYS:
 4. **Create content if missing**: If file is empty or missing, create proper description content first
 5. **Clean up after use**: Delete temporary body files after GitHub CLI operations - they should NOT be committed to the repository
 
+#### PR Creation Example Workflow
+```bash
+# 1. Create PR body file with actual content
+echo "## Summary" > pr-body.md
+echo "This PR implements..." >> pr-body.md
+echo "## Changes" >> pr-body.md
+echo "- Added feature X" >> pr-body.md
+echo "## Closes" >> pr-body.md
+echo "Closes #31" >> pr-body.md
+
+# 2. Verify file exists and has content
+type pr-body.md
+
+# 3. Create PR using body file
+gh pr create --title "fix: Issue description" --body-file pr-body.md --base develop
+
+# 4. Clean up temporary file
+del pr-body.md
+```
+
 ### GitHub CLI Output Interpretation
-- **Normal Behavior**: GitHub CLI commands may produce output with empty lines at the beginning and end
-- **Success Indication**: Command successful execution is indicated by command completion without error messages
-- **Empty Output**: Some commands (like `gh issue list` on repositories with no issues) may produce minimal or empty output
-- **Formatting**: Empty lines and minimal output are normal GitHub CLI formatting behavior, not errors
-- **IMPORTANT**: Always ignore empty lines in GitHub CLI output - they are normal formatting
-- **When given issue number**: Proceed with implementation even if `gh issue view` shows empty lines - the issue exists
+- **CRITICAL OUTPUT CAPTURE ISSUE**: GitHub CLI commands execute successfully but their output may not be visible in terminal tool results
+- **Verification Required**: When GitHub CLI commands appear to produce no output, use file redirection to verify actual results
+- **Windows cmd.exe Workaround**: Use `gh command > output.txt && type output.txt` to capture and display GitHub CLI output
+- **File Redirection Method**: For validation purposes, redirect output to files: `gh issue list > issues.txt`
+- **Success Indication**: Command successful execution is indicated by command completion without error messages (even with invisible output)
+- **Empty vs Invisible Output**: Distinguish between truly empty output (no issues exist) and invisible output (output capture problem)
+- **Validation Commands**: 
+  - `gh issue list > issues.txt && type issues.txt` - List and display issues
+  - `gh issue view {number} > issue-details.txt && type issue-details.txt` - View and display issue details
+- **IMPORTANT**: Never assume no output means no data - always verify with file redirection when in doubt
+- **When given issue number**: Proceed with implementation - GitHub CLI output capture issues don't indicate missing issues
 
 ## Git Branch Rules
 Follow these branch protection and workflow rules:
