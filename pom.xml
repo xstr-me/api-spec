@@ -163,8 +163,7 @@
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
                 <version>7.1.0</version>
-                <executions>
-                    <!-- Generate Java Client -->
+                <executions>                    <!-- Generate Java Client -->
                     <execution>
                         <id>generate-java-client</id>
                         <goals>
@@ -173,14 +172,14 @@
                         <configuration>
                             <inputSpec>${project.basedir}/api-spec.yml</inputSpec>
                             <generatorName>java</generatorName>
+                            <library>okhttp-gson</library>
                             <output>${project.build.directory}/generated-sources/java-client</output>
                             <apiPackage>me.xstr.api.client.api</apiPackage>
                             <modelPackage>me.xstr.api.client.model</modelPackage>
                             <invokerPackage>me.xstr.api.client</invokerPackage>
                             <configOptions>
-                                <library>okhttp-gson</library>
-                                <dateLibrary>java8</dateLibrary>
                                 <java8>true</java8>
+                                <dateLibrary>java8</dateLibrary>
                                 <useJakartaEe>true</useJakartaEe>
                                 <useBeanValidation>true</useBeanValidation>
                                 <performBeanValidation>true</performBeanValidation>
@@ -191,10 +190,17 @@
                                 <serializableModel>true</serializableModel>
                                 <generateModelTests>false</generateModelTests>
                                 <generateApiTests>false</generateApiTests>
+                                <useOptional>true</useOptional>
+                                <openApiNullable>false</openApiNullable>
+                                <modelNameSuffix></modelNameSuffix>
+                                <modelNamePrefix></modelNamePrefix>
+                                <apiNameSuffix>Api</apiNameSuffix>
+                                <generateSupportingFiles>true</generateSupportingFiles>
+                                <skipFormModel>false</skipFormModel>
+                                <generateAliasAsModel>false</generateAliasAsModel>
                             </configOptions>
                         </configuration>
-                    </execution>
-                      <!-- Generate Spring Boot Server Interfaces and Controllers -->
+                    </execution>                      <!-- Generate Spring Boot Server Interfaces and Controllers -->
                     <execution>
                         <id>generate-spring-server</id>
                         <goals>
@@ -211,11 +217,12 @@
                             <configOptions>
                                 <java8>true</java8>
                                 <useJakartaEe>true</useJakartaEe>
+                                <useSpringBoot3>true</useSpringBoot3>
                                 <useBeanValidation>true</useBeanValidation>
                                 <performBeanValidation>true</performBeanValidation>
-                                <useSpringBoot3>true</useSpringBoot3>
                                 <reactive>false</reactive>
                                 <documentationProvider>springdoc</documentationProvider>
+                                <annotationLibrary>swagger2</annotationLibrary>
                                 <interfaceOnly>false</interfaceOnly>
                                 <delegatePattern>true</delegatePattern>
                                 <serviceInterface>true</serviceInterface>

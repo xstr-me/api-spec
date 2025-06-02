@@ -6,6 +6,25 @@ This document explains the enhanced OpenAPI code generation configuration implem
 
 The project now generates both **Java Client** and **Spring Boot Server** code from the OpenAPI specification, providing a complete foundation for API development.
 
+## Configuration Approach
+
+The project includes separate YAML configuration files for documentation and reference:
+
+- `java-client-generator.yml` - Configuration reference for Java client generation  
+- `spring-server-generator.yml` - Configuration reference for Spring Boot server generation
+
+> **Current Implementation**: Due to compatibility issues with OpenAPI Generator 7.1.0, 
+> the actual configuration is implemented inline in `pom.xml`. The YAML files serve as 
+> documentation and reference, and can be used when external configuration support 
+> is improved in future versions.
+
+### Benefits of Organized Configuration
+
+1. **Separation of Concerns**: Each generator has its own documented configuration
+2. **Maintainability**: Clear documentation of all configuration options  
+3. **Readability**: YAML format with comprehensive comments
+4. **Future-Ready**: Easy migration to external configuration when supported
+
 ## Generated Artifacts
 
 ### 1. Java Client (`target/generated-sources/java-client/`)

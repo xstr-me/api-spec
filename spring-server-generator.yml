@@ -1,0 +1,52 @@
+# OpenAPI Generator Configuration for Spring Boot Server (REFERENCE ONLY)
+#
+# This file serves as documentation and reference for the Spring Boot server configuration.
+# The actual configuration is currently implemented inline in pom.xml due to 
+# compatibility issues with external configuration files in OpenAPI Generator 7.1.0.
+#
+# Configuration Description:
+# - Generates Spring Boot 3.x server code with controller interfaces and delegate pattern
+# - Supports Jakarta EE annotations and Bean validation
+# - Creates controller interfaces, implementations, and delegate classes
+# - Integrates with SpringDoc OpenAPI for documentation
+#
+# To use external configuration, update pom.xml to reference this file:
+# <configurationFile>${project.basedir}/spring-server-generator.yml</configurationFile>
+
+generatorName: spring
+library: spring-boot
+apiPackage: me.xstr.api.server.controller
+modelPackage: me.xstr.api.server.model
+invokerPackage: me.xstr.api.server
+additionalProperties:
+  java8: true
+  useJakartaEe: true
+  useSpringBoot3: true
+  useBeanValidation: true
+  performBeanValidation: true
+  reactive: false
+  documentationProvider: springdoc
+  annotationLibrary: swagger2
+  interfaceOnly: false
+  delegatePattern: true
+  serviceInterface: true
+  serviceImplementation: false
+  skipDefaultInterface: false
+  useTags: true
+  useOptional: true
+  hideGenerationTimestamp: true
+  generateApiDocumentation: true
+  generateModelDocumentation: true
+  generateSupportingFiles: true
+  withXml: false
+  serializableModel: true
+  openApiNullable: false
+  skipFormModel: true
+  generateAliasAsModel: false
+  generateModelTests: false
+  generateApiTests: false
+  modelNameSuffix: ""
+  modelNamePrefix: ""
+  apiNameSuffix: "Controller"
+  basePackage: me.xstr.api.server
+  configPackage: me.xstr.api.server.config
