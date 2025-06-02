@@ -15,9 +15,9 @@
 
 generatorName: spring
 library: spring-boot
-apiPackage: me.xstr.api.server.controller
-modelPackage: me.xstr.api.server.model
-invokerPackage: me.xstr.api.server
+apiPackage: me.xstr.api.controller
+modelPackage: me.xstr.api.model
+invokerPackage: me.xstr.api
 additionalProperties:
   java8: true
   useJakartaEe: true
@@ -48,5 +48,5 @@ additionalProperties:
   modelNameSuffix: ""
   modelNamePrefix: ""
   apiNameSuffix: "Controller"
-  basePackage: me.xstr.api.server
-  configPackage: me.xstr.api.server.config
+  basePackage: me.xstr.api
+  configPackage: me.xstr.api.config

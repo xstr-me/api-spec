@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
@@ -7,176 +7,88 @@
 
     <groupId>me.xstr</groupId>
     <artifactId>api-spec</artifactId>
-    <version>0.0.1-alpha</version>
-    <packaging>jar</packaging>
+    <version>1.0.0-SNAPSHOT</version>
+    <name>xstr.me API Specification</name>
+    <description>OpenAPI specification and Spring Boot server code generation for xstr.me</description>
 
-    <name>XStr API Specification</name>
-    <description>OpenAPI specification for XStr.me services</description>    <url>https://github.com/xstr-me/api-spec</url>
-
-    <licenses>
-        <license>
-            <name>MIT License</name>
-            <url>https://opensource.org/licenses/MIT</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
-    <scm>
-        <url>https://github.com/xstr-me/api-spec</url>
-        <connection>scm:git:git://github.com/xstr-me/api-spec.git</connection>
-        <developerConnection>scm:git:ssh://github.com/xstr-me/api-spec.git</developerConnection>
-    </scm>
-
-    <developers>
-        <developer>
-            <id>xstr-team</id>
-            <name>XStr.me Development Team</name>
-            <email>dev@xstr.me</email>
-            <url>https://github.com/xstr-me</url>
-            <organization>XStr.me</organization>
-            <organizationUrl>https://xstr.me</organizationUrl>
-            <roles>
-                <role>developer</role>
-                <role>maintainer</role>
-            </roles>
-            <timezone>UTC</timezone>
-        </developer>
-    </developers>    <properties>
+    <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jackson.version>2.17.2</jackson.version>
-        <spring.version>6.2.0</spring.version>
-        <swagger.annotations.version>2.2.22</swagger.annotations.version>
-        <openapi.generator.version>7.1.0</openapi.generator.version>
+        <openapi-generator-maven-plugin.version>7.1.0</openapi-generator-maven-plugin.version>
+        <spring-boot.version>3.2.0</spring-boot.version>
+        <jakarta.validation.version>3.0.2</jakarta.validation.version>
+        <jackson.version>2.15.3</jackson.version>
+        <springdoc.version>2.3.0</springdoc.version>
     </properties>
 
     <dependencies>
-        <!-- Jackson for JSON processing -->
+        <!-- Spring Boot Starter Web -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <version>${spring-boot.version}</version>
+        </dependency>
+
+        <!-- Spring Boot Starter Validation -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+            <version>${spring-boot.version}</version>
+        </dependency>
+
+        <!-- Jakarta Validation API -->
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <version>${jakarta.validation.version}</version>
+        </dependency>
+
+        <!-- Jackson Core -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
             <version>${jackson.version}</version>
         </dependency>
+
+        <!-- Jackson Annotations -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
             <version>${jackson.version}</version>
         </dependency>
+
+        <!-- Jackson Databind -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
 
-        <!-- Swagger annotations -->
-        <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-annotations</artifactId>
-            <version>${swagger.annotations.version}</version>
-        </dependency>
-
-        <!-- HTTP client -->
-        <dependency>
-            <groupId>com.squareup.okhttp3</groupId>
-            <artifactId>okhttp</artifactId>
-            <version>4.11.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.squareup.okhttp3</groupId>
-            <artifactId>logging-interceptor</artifactId>
-            <version>4.11.0</version>
-        </dependency>        <!-- Gson for JSON processing (alternative) -->
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.10.1</version>
-        </dependency>
-          <!-- GsonFire for enhanced Gson features (required by generated client) -->
-        <dependency>
-            <groupId>io.gsonfire</groupId>
-            <artifactId>gson-fire</artifactId>
-            <version>1.8.5</version>
-        </dependency>        <!-- JSR-305 annotations (required by generated client for @Nullable etc.) -->
-        <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
-            <version>3.0.2</version>
-        </dependency>        <!-- Jakarta Annotation API (required for @Generated annotation) -->
-        <dependency>
-            <groupId>jakarta.annotation</groupId>
-            <artifactId>jakarta.annotation-api</artifactId>
-            <version>2.1.1</version>
-        </dependency>        <!-- Spring Boot dependencies for server generation -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <version>3.2.0</version>
-            <scope>provided</scope>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-validation</artifactId>
-            <version>3.2.0</version>
-            <scope>provided</scope>
-        </dependency>
-        
-        <!-- SpringDoc OpenAPI for Spring Boot 3.x -->
+        <!-- SpringDoc OpenAPI -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>2.2.0</version>
-            <scope>provided</scope>
-        </dependency><!-- Bean Validation API -->
-        <dependency>
-            <groupId>jakarta.validation</groupId>
-            <artifactId>jakarta.validation-api</artifactId>
-            <version>3.0.2</version>
+            <version>${springdoc.version}</version>
         </dependency>
 
-        <!-- Hibernate Validator implementation for Jakarta EE -->        <dependency>
-            <groupId>org.hibernate.validator</groupId>
-            <artifactId>hibernate-validator</artifactId>
-            <version>8.0.1.Final</version>
-        </dependency></dependencies>
+        <!-- OpenAPI Generator Annotations -->
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>openapi-generator-maven-plugin</artifactId>
+            <version>${openapi-generator-maven-plugin.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 
-    <issueManagement>
-        <system>GitHub Issues</system>
-        <url>https://github.com/xstr-me/api-spec/issues</url>
-    </issueManagement>
-
-    <build>        <resources>
-            <resource>
-                <directory>.</directory>
-                <includes>
-                    <include>api-spec.yml</include>
-                </includes>
-            </resource>
-        </resources><plugins>            <!-- OpenAPI Generator Maven Plugin -->
+    <build>
+        <plugins>
+            <!-- OpenAPI Generator Maven Plugin -->
             <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>7.1.0</version>
-                <executions>                    <!-- Generate Java Client -->
-                    <execution>
-                        <id>generate-java-client</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <inputSpec>${project.basedir}/api-spec.yml</inputSpec>
-                            <generatorName>java</generatorName>
-                            <configurationFile>${project.basedir}/java-client-generator.yml</configurationFile>
-                            <library>okhttp-gson</library>
-                            <output>${project.build.directory}/generated-sources</output>
-                        </configuration>
-                    </execution>                      <!-- Generate Spring Boot Server Interfaces and Controllers -->
+                <version>${openapi-generator-maven-plugin.version}</version>
+                <executions>
                     <execution>
                         <id>generate-spring-server</id>
                         <goals>
@@ -186,40 +98,78 @@
                             <inputSpec>${project.basedir}/api-spec.yml</inputSpec>
                             <generatorName>spring</generatorName>
                             <library>spring-boot</library>
-                            <output>${project.build.directory}/generated-sources</output>                            
-                            <configurationFile>${project.basedir}/spring-server-generator.yml</configurationFile>
+                            <output>${project.build.directory}/generated-sources</output>
+                            <apiPackage>me.xstr.api.controller</apiPackage>
+                            <modelPackage>me.xstr.api.model</modelPackage>
+                            <invokerPackage>me.xstr.api</invokerPackage>
+                            <configOptions>
+                                <java8>true</java8>
+                                <useJakartaEe>true</useJakartaEe>
+                                <useSpringBoot3>true</useSpringBoot3>
+                                <useBeanValidation>true</useBeanValidation>
+                                <performBeanValidation>true</performBeanValidation>
+                                <reactive>false</reactive>
+                                <documentationProvider>springdoc</documentationProvider>
+                                <annotationLibrary>swagger2</annotationLibrary>
+                                <interfaceOnly>false</interfaceOnly>
+                                <delegatePattern>true</delegatePattern>
+                                <serviceInterface>true</serviceInterface>
+                                <serviceImplementation>false</serviceImplementation>
+                                <skipDefaultInterface>false</skipDefaultInterface>
+                                <useTags>true</useTags>
+                                <useOptional>true</useOptional>
+                                <hideGenerationTimestamp>true</hideGenerationTimestamp>
+                                <generateApiDocumentation>true</generateApiDocumentation>
+                                <generateModelDocumentation>true</generateModelDocumentation>
+                                <generateSupportingFiles>true</generateSupportingFiles>
+                                <withXml>false</withXml>
+                                <serializableModel>true</serializableModel>
+                                <openApiNullable>false</openApiNullable>
+                                <skipFormModel>true</skipFormModel>
+                                <generateAliasAsModel>false</generateAliasAsModel>
+                                <generateModelTests>false</generateModelTests>
+                                <generateApiTests>false</generateApiTests>
+                                <modelNameSuffix></modelNameSuffix>
+                                <modelNamePrefix></modelNamePrefix>
+                                <apiNameSuffix>Controller</apiNameSuffix>
+                                <basePackage>me.xstr.api</basePackage>
+                            </configOptions>
                         </configuration>
                     </execution>
                 </executions>
-            </plugin><!-- Maven Compiler Plugin -->
+            </plugin>
+
+            <!-- Maven Compiler Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
                 <configuration>
-                    <release>17</release>
-                    <fork>true</fork>
+                    <source>17</source>
+                    <target>17</target>
                 </configuration>
-            </plugin><!-- Build Helper Maven Plugin - Add generated sources to compilation path -->
+            </plugin>
+
+            <!-- Build Helper Maven Plugin to add generated sources -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <version>3.4.0</version>
                 <executions>
                     <execution>
-                        <id>add-generated-source</id>
+                        <id>add-source</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>add-source</goal>
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${project.build.directory}/generated-sources/java-client/src/main/java</source>
-                                <source>${project.build.directory}/generated-sources/spring-server/src/main/java</source>
+                                <source>${project.build.directory}/generated-sources/src/main/java</source>
                             </sources>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-        </plugins>    </build>
+        </plugins>
+    </build>
 </project>

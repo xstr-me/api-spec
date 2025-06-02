@@ -1,100 +1,77 @@
 # OpenAPI Code Generation Configuration
 
-This document explains the enhanced OpenAPI code generation configuration implemented for Spring Boot integration.
+This document explains the OpenAPI code generation configuration for Spring Boot server development.
 
 ## Overview
 
-The project now generates both **Java Client** and **Spring Boot Server** code from the OpenAPI specification, providing a complete foundation for API development.
+The project generates **Spring Boot Server** code from the OpenAPI specification, providing a complete foundation for API implementation with modern Spring Boot 3.x features.
 
 ## Configuration Approach
 
-The project includes separate YAML configuration files for documentation and reference:
+The project uses inline configuration in the Maven POM file for optimal compatibility with OpenAPI Generator 7.1.0. A separate YAML configuration file is maintained for documentation:
 
-- `java-client-generator.yml` - Configuration reference for Java client generation  
 - `spring-server-generator.yml` - Configuration reference for Spring Boot server generation
 
-> **Current Implementation**: Due to compatibility issues with OpenAPI Generator 7.1.0, 
-> the actual configuration is implemented inline in `pom.xml`. The YAML files serve as 
-> documentation and reference, and can be used when external configuration support 
-> is improved in future versions.
+> **Current Implementation**: The configuration is implemented inline in `pom.xml` for 
+> maximum compatibility and reliability. The YAML file serves as documentation and 
+> reference for all available configuration options.
 
-### Benefits of Organized Configuration
+### Benefits of This Approach
 
-1. **Separation of Concerns**: Each generator has its own documented configuration
-2. **Maintainability**: Clear documentation of all configuration options  
-3. **Readability**: YAML format with comprehensive comments
-4. **Future-Ready**: Easy migration to external configuration when supported
+1. **Reliability**: Inline configuration eliminates external file dependency issues
+2. **Maintainability**: All configuration is in one central location (pom.xml)
+3. **Compatibility**: Works consistently across different OpenAPI Generator versions
+4. **Documentation**: YAML reference file provides clear documentation of options
 
 ## Generated Artifacts
 
-### 1. Java Client (`target/generated-sources/java-client/`)
-- **Purpose**: HTTP client for consuming the XStr.me API
-- **Generator**: `java` with `okhttp-gson` library
-- **Package**: `me.xstr.api.client`
-- **Features**:
-  - OkHttp-based HTTP client
-  - Gson JSON serialization
-  - Jakarta EE annotations
-  - Bean validation support
-  - Java 8+ time API support
-
-### 2. Spring Boot Server (`target/generated-sources/spring-server/`)
+### Spring Boot Server (`target/generated-sources/src/main/java/`)
 - **Purpose**: Server-side controllers and models for implementing the API
 - **Generator**: `spring` with `spring-boot` library  
-- **Package**: `me.xstr.api.server`
+- **Base Package**: `me.xstr.api`
 - **Features**:
   - Spring Boot 3.x compatibility
-  - Controller interfaces and implementations
+  - Controller interfaces and implementations  
   - Delegate pattern for service implementation
-  - Jakarta EE validation
+  - Jakarta EE validation annotations
   - SpringDoc OpenAPI integration
   - Bean validation support
+  - Modern Java 17+ features
 
-## Generated Structure
+## Package Structure
 
-### Client Structure
-```
-me.xstr.api.client/
-├── api/
-│   ├── HealthApi.java          # Health check API client
-│   └── InfoApi.java            # Version info API client
-├── model/
-│   ├── ErrorResponse.java      # Error response model
-│   ├── HealthResponse.java     # Health response model
-│   └── VersionResponse.java    # Version response model
-├── auth/                       # Authentication classes
-└── ApiClient.java              # Main HTTP client
-```
+The generated code follows a clean package structure optimized for Spring Boot development:
 
-### Server Structure  
+### Generated Structure
 ```
-me.xstr.api.server/
+me.xstr.api/
 ├── controller/
-│   ├── HealthApi.java              # Health API interface
-│   ├── HealthApiController.java    # Health controller implementation
-│   ├── HealthApiDelegate.java      # Health service delegate interface
-│   ├── InfoApi.java                # Info API interface
-│   ├── InfoApiController.java      # Info controller implementation
-│   └── InfoApiDelegate.java        # Info service delegate interface
+│   ├── ApiUtil.java               # API utilities
+│   ├── HealthApi.java             # Health API interface
+│   ├── HealthApiController.java   # Health controller implementation
+│   ├── HealthApiDelegate.java     # Health service delegate interface
+│   ├── InfoApi.java               # Info API interface
+│   ├── InfoApiController.java     # Info controller implementation
+│   └── InfoApiDelegate.java       # Info service delegate interface
 ├── model/
-│   ├── ErrorResponse.java          # Server-side error model
-│   ├── HealthResponse.java         # Server-side health model
-│   └── VersionResponse.java        # Server-side version model
-├── config/                         # Spring configuration
-└── OpenApiGeneratorApplication.java # Sample Spring Boot application
+│   ├── ErrorResponse.java         # Error response model
+│   ├── HealthResponse.java        # Health response model
+│   └── VersionResponse.java       # Version response model
+├── OpenApiGeneratorApplication.java # Sample Spring Boot application
+└── RFC3339DateFormat.java         # Date formatting utilities
 ```
 
 ## Configuration Benefits
 
-### 1. Separate Concerns
-- **Client**: For external applications consuming the API
-- **Server**: For implementing the API service
+### 1. Focused Architecture
+- **Single Purpose**: Optimized exclusively for Spring Boot server development
+- **Clean Structure**: No client-specific dependencies or configurations
 
 ### 2. Spring Boot Integration
 - Uses Spring Boot 3.x annotations and patterns
 - Generates `@Controller` classes with proper routing
 - Includes delegate interfaces for clean service implementation
-- SpringDoc integration for API documentation
+- SpringDoc integration for automatic API documentation
 
 ### 3. Interface-Based Design
 - Controller interfaces define the API contract
@@ -103,22 +80,13 @@ me.xstr.api.server/
 
 ### 4. Modern Java Features
 - Jakarta EE annotations (not legacy javax)
-- Java 8+ time API support
+- Java 17+ language features
 - Bean validation annotations
 - Optional support for cleaner code
 
 ## Usage Examples
 
-### Client Usage
-```java
-ApiClient client = new ApiClient();
-client.setBasePath("http://localhost:8080/v1");
-
-HealthApi healthApi = new HealthApi(client);
-HealthResponse health = healthApi.getHealth();
-```
-
-### Server Implementation
+### Service Implementation
 ```java
 @Service
 public class HealthService implements HealthApiDelegate {
@@ -133,50 +101,57 @@ public class HealthService implements HealthApiDelegate {
 }
 ```
 
+### Spring Boot Application
+```java
+@SpringBootApplication
+public class XstrApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(XstrApplication.class, args);
+    }
+}
+```
+
 ## Maven Configuration
 
-The enhanced configuration includes two separate executions in the `openapi-generator-maven-plugin`:
+The configuration uses a single execution in the `openapi-generator-maven-plugin`:
 
-1. **Java Client Generation** (`generate-java-client`)
-2. **Spring Server Generation** (`generate-spring-server`)
+- **Spring Server Generation** (`generate-spring-server`)
 
-Both generated source directories are automatically added to the compilation path via the `build-helper-maven-plugin`.
+The generated source directory is automatically added to the compilation path via the `build-helper-maven-plugin`.
 
 ## Dependencies
 
-### Required for Client
+### Required Dependencies
+- Spring Boot 3.x (Web & Validation starters)
+- SpringDoc OpenAPI (automatic documentation)
+- Jakarta validation APIs
 - Jackson (JSON processing)
-- OkHttp (HTTP client)
-- Gson (alternative JSON processing)
 
-### Required for Server
-- Spring Boot 3.x
-- SpringDoc OpenAPI
-- Jakarta validation
-- Hibernate validator
-
-All dependencies are included with `provided` scope, allowing consuming applications to choose their own versions.
+All dependencies are included with appropriate scope management in the Maven POM.
 
 ## Build Commands
 
 ```bash
-# Generate code only
+# Generate Spring Boot server code only
 mvn generate-sources
 
 # Generate and compile
 mvn compile
 
-# Full build
-mvn clean compile
+# Full build with tests
+mvn clean compile test
+
+# Package the generated sources
+mvn clean package
 ```
 
 ## Next Steps
 
-This configuration provides the foundation for:
+This single-project configuration provides the foundation for:
 
 1. **API Implementation**: Use the generated server interfaces to implement business logic
-2. **Client SDKs**: Package the client code for distribution
-3. **Documentation**: Auto-generated API docs via SpringDoc
-4. **Testing**: Use generated models for API testing
+2. **Spring Boot Integration**: Leverage automatic configuration and dependency injection
+3. **Documentation**: Auto-generated API docs via SpringDoc at `/swagger-ui.html`
+4. **Testing**: Use generated models for comprehensive API testing
 
-The code generation is now optimized for Spring Boot development while maintaining compatibility with the existing Java client generation for external consumers.
+The code generation is now streamlined and optimized exclusively for Spring Boot server development, providing a clean and maintainable foundation for API implementation.
