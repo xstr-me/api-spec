@@ -172,33 +172,9 @@
                         <configuration>
                             <inputSpec>${project.basedir}/api-spec.yml</inputSpec>
                             <generatorName>java</generatorName>
+                            <configurationFile>${project.basedir}/java-client-generator.yml</configurationFile>
                             <library>okhttp-gson</library>
-                            <output>${project.build.directory}/generated-sources/java-client</output>
-                            <apiPackage>me.xstr.api.client.api</apiPackage>
-                            <modelPackage>me.xstr.api.client.model</modelPackage>
-                            <invokerPackage>me.xstr.api.client</invokerPackage>
-                            <configOptions>
-                                <java8>true</java8>
-                                <dateLibrary>java8</dateLibrary>
-                                <useJakartaEe>true</useJakartaEe>
-                                <useBeanValidation>true</useBeanValidation>
-                                <performBeanValidation>true</performBeanValidation>
-                                <hideGenerationTimestamp>true</hideGenerationTimestamp>
-                                <generateApiDocumentation>true</generateApiDocumentation>
-                                <generateModelDocumentation>true</generateModelDocumentation>
-                                <withXml>false</withXml>
-                                <serializableModel>true</serializableModel>
-                                <generateModelTests>false</generateModelTests>
-                                <generateApiTests>false</generateApiTests>
-                                <useOptional>true</useOptional>
-                                <openApiNullable>false</openApiNullable>
-                                <modelNameSuffix></modelNameSuffix>
-                                <modelNamePrefix></modelNamePrefix>
-                                <apiNameSuffix>Api</apiNameSuffix>
-                                <generateSupportingFiles>true</generateSupportingFiles>
-                                <skipFormModel>false</skipFormModel>
-                                <generateAliasAsModel>false</generateAliasAsModel>
-                            </configOptions>
+                            <output>${project.build.directory}/generated-sources</output>
                         </configuration>
                     </execution>                      <!-- Generate Spring Boot Server Interfaces and Controllers -->
                     <execution>
@@ -210,43 +186,8 @@
                             <inputSpec>${project.basedir}/api-spec.yml</inputSpec>
                             <generatorName>spring</generatorName>
                             <library>spring-boot</library>
-                            <output>${project.build.directory}/generated-sources/spring-server</output>
-                            <apiPackage>me.xstr.api.server.controller</apiPackage>
-                            <modelPackage>me.xstr.api.server.model</modelPackage>
-                            <invokerPackage>me.xstr.api.server</invokerPackage>
-                            <configOptions>
-                                <java8>true</java8>
-                                <useJakartaEe>true</useJakartaEe>
-                                <useSpringBoot3>true</useSpringBoot3>
-                                <useBeanValidation>true</useBeanValidation>
-                                <performBeanValidation>true</performBeanValidation>
-                                <reactive>false</reactive>
-                                <documentationProvider>springdoc</documentationProvider>
-                                <annotationLibrary>swagger2</annotationLibrary>
-                                <interfaceOnly>false</interfaceOnly>
-                                <delegatePattern>true</delegatePattern>
-                                <serviceInterface>true</serviceInterface>
-                                <serviceImplementation>false</serviceImplementation>
-                                <skipDefaultInterface>false</skipDefaultInterface>
-                                <useTags>true</useTags>
-                                <useOptional>true</useOptional>
-                                <hideGenerationTimestamp>true</hideGenerationTimestamp>
-                                <generateApiDocumentation>true</generateApiDocumentation>
-                                <generateModelDocumentation>true</generateModelDocumentation>
-                                <generateSupportingFiles>true</generateSupportingFiles>
-                                <withXml>false</withXml>
-                                <serializableModel>true</serializableModel>
-                                <openApiNullable>false</openApiNullable>
-                                <skipFormModel>true</skipFormModel>
-                                <generateAliasAsModel>false</generateAliasAsModel>
-                                <generateModelTests>false</generateModelTests>
-                                <generateApiTests>false</generateApiTests>
-                                <modelNameSuffix></modelNameSuffix>
-                                <modelNamePrefix></modelNamePrefix>
-                                <apiNameSuffix>Controller</apiNameSuffix>
-                                <basePackage>me.xstr.api.server</basePackage>
-                                <configPackage>me.xstr.api.server.config</configPackage>
-                            </configOptions>
+                            <output>${project.build.directory}/generated-sources</output>                            
+                            <configurationFile>${project.basedir}/spring-server-generator.yml</configurationFile>
                         </configuration>
                     </execution>
                 </executions>
