@@ -147,3 +147,10 @@ Follow these branch protection and workflow rules:
 
 ## General Guidelines
 Coding standards, domain knowledge, and preferences that AI should follow.
+
+## Label Usage for GitHub CLI
+- **Only use labels that already exist in the repository when creating issues or PRs with the GitHub CLI.**
+- **To check available labels, run:**
+  - `gh label list > labels.txt && type labels.txt` (Windows)
+- **Do not invent or assume labels (e.g., "maven", "testing", "code-quality") unless you have verified they exist.**
+- **If a required label is missing, either create it first (if you have permission) or proceed with only the required/known labels (e.g., "enhancement").**
