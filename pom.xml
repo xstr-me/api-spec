@@ -112,13 +112,28 @@
             <groupId>jakarta.annotation</groupId>
             <artifactId>jakarta.annotation-api</artifactId>
             <version>2.1.1</version>
-        </dependency>        <!-- Spring Web for server stubs -->
+        </dependency>        <!-- Spring Boot dependencies for server generation -->
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-            <version>6.2.0</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <version>3.2.0</version>
             <scope>provided</scope>
-        </dependency>        <!-- Bean Validation API -->
+        </dependency>
+        
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+            <version>3.2.0</version>
+            <scope>provided</scope>
+        </dependency>
+        
+        <!-- SpringDoc OpenAPI for Spring Boot 3.x -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.2.0</version>
+            <scope>provided</scope>
+        </dependency><!-- Bean Validation API -->
         <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
@@ -149,17 +164,20 @@
                 <artifactId>openapi-generator-maven-plugin</artifactId>
                 <version>7.1.0</version>
                 <executions>
+                    <!-- Generate Java Client -->
                     <execution>
                         <id>generate-java-client</id>
                         <goals>
                             <goal>generate</goal>
-                        </goals>                        <configuration>
+                        </goals>
+                        <configuration>
                             <inputSpec>${project.basedir}/api-spec.yml</inputSpec>
                             <generatorName>java</generatorName>
                             <output>${project.build.directory}/generated-sources/java-client</output>
                             <apiPackage>me.xstr.api.client.api</apiPackage>
                             <modelPackage>me.xstr.api.client.model</modelPackage>
-                            <invokerPackage>me.xstr.api.client</invokerPackage>                            <configOptions>
+                            <invokerPackage>me.xstr.api.client</invokerPackage>
+                            <configOptions>
                                 <library>okhttp-gson</library>
                                 <dateLibrary>java8</dateLibrary>
                                 <java8>true</java8>
@@ -176,8 +194,56 @@
                             </configOptions>
                         </configuration>
                     </execution>
+                      <!-- Generate Spring Boot Server Interfaces and Controllers -->
+                    <execution>
+                        <id>generate-spring-server</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/api-spec.yml</inputSpec>
+                            <generatorName>spring</generatorName>
+                            <library>spring-boot</library>
+                            <output>${project.build.directory}/generated-sources/spring-server</output>
+                            <apiPackage>me.xstr.api.server.controller</apiPackage>
+                            <modelPackage>me.xstr.api.server.model</modelPackage>
+                            <invokerPackage>me.xstr.api.server</invokerPackage>
+                            <configOptions>
+                                <java8>true</java8>
+                                <useJakartaEe>true</useJakartaEe>
+                                <useBeanValidation>true</useBeanValidation>
+                                <performBeanValidation>true</performBeanValidation>
+                                <useSpringBoot3>true</useSpringBoot3>
+                                <reactive>false</reactive>
+                                <documentationProvider>springdoc</documentationProvider>
+                                <interfaceOnly>false</interfaceOnly>
+                                <delegatePattern>true</delegatePattern>
+                                <serviceInterface>true</serviceInterface>
+                                <serviceImplementation>false</serviceImplementation>
+                                <skipDefaultInterface>false</skipDefaultInterface>
+                                <useTags>true</useTags>
+                                <useOptional>true</useOptional>
+                                <hideGenerationTimestamp>true</hideGenerationTimestamp>
+                                <generateApiDocumentation>true</generateApiDocumentation>
+                                <generateModelDocumentation>true</generateModelDocumentation>
+                                <generateSupportingFiles>true</generateSupportingFiles>
+                                <withXml>false</withXml>
+                                <serializableModel>true</serializableModel>
+                                <openApiNullable>false</openApiNullable>
+                                <skipFormModel>true</skipFormModel>
+                                <generateAliasAsModel>false</generateAliasAsModel>
+                                <generateModelTests>false</generateModelTests>
+                                <generateApiTests>false</generateApiTests>
+                                <modelNameSuffix></modelNameSuffix>
+                                <modelNamePrefix></modelNamePrefix>
+                                <apiNameSuffix>Controller</apiNameSuffix>
+                                <basePackage>me.xstr.api.server</basePackage>
+                                <configPackage>me.xstr.api.server.config</configPackage>
+                            </configOptions>
+                        </configuration>
+                    </execution>
                 </executions>
-            </plugin>            <!-- Maven Compiler Plugin -->
+            </plugin><!-- Maven Compiler Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -197,9 +263,11 @@
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>add-source</goal>
-                        </goals>                        <configuration>
+                        </goals>
+                        <configuration>
                             <sources>
                                 <source>${project.build.directory}/generated-sources/java-client/src/main/java</source>
+                                <source>${project.build.directory}/generated-sources/spring-server/src/main/java</source>
                             </sources>
                         </configuration>
                     </execution>
