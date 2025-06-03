@@ -236,7 +236,8 @@ jobs:
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: 'temurin'
-          cache: maven      - name: Install dependencies
+          cache: maven
+      - name: Install dependencies
         run: npm ci
 
       - name: Regenerate TypeScript client
