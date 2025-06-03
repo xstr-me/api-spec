@@ -188,22 +188,21 @@
                         </goals>
                         <configuration>
                             <inputSpec>${project.basedir}/api-spec.yml</inputSpec>
-                            <generatorName>typescript-fetch</generatorName>
-                            <output>${project.basedir}/src/main/typescript</output>
-                            <configOptions>
+                            <generatorName>typescript-axios</generatorName>  <!-- Different generator -->
+                            <output>${project.basedir}/src/main/typescript</output>                            <configOptions>
                                 <npmName>xstr-api-client</npmName>
                                 <npmVersion>1.0.0</npmVersion>
                                 <supportsES6>true</supportsES6>
-                                <typescriptThreePlus>true</typescriptThreePlus>
                                 <withInterfaces>true</withInterfaces>
-                                <useSingleRequestParameter>false</useSingleRequestParameter>
-                                <prefixParameterInterfaces>true</prefixParameterInterfaces>
                                 <stringEnums>true</stringEnums>
                                 <modelPropertyNaming>camelCase</modelPropertyNaming>
                                 <enumPropertyNaming>UPPERCASE</enumPropertyNaming>
-                            </configOptions>
+                                <withSeparateModelsAndApi>true</withSeparateModelsAndApi>
+                                <apiPackage>me/xstr/api/apis</apiPackage>
+                                <modelPackage>me/xstr/api/models</modelPackage>                         
+                                </configOptions>
                             <skipOverwrite>false</skipOverwrite>
-                            <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
+                            <skipIfSpecIsUnchanged>false</skipIfSpecIsUnchanged>
                             <removeOperationIdPrefix>false</removeOperationIdPrefix>
                         </configuration>
                     </execution>
