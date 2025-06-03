@@ -1,5 +1,4 @@
 README.md
-src/main/java/me/xstr/api/OpenApiGeneratorApplication.java
 src/main/java/me/xstr/api/RFC3339DateFormat.java
 src/main/java/me/xstr/api/configuration/HomeController.java
 src/main/java/me/xstr/api/configuration/SpringDocConfiguration.java
