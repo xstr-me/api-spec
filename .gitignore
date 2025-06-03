@@ -1,2 +1,8 @@
 node_modules
 target/
+
+# OpenAPI Generator files
+.openapi-generator/
+.openapi-generator-ignore
+src/main/**/.openapi-generator/
+src/main/**/.openapi-generator-ignore

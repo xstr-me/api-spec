@@ -28,3 +28,9 @@ pom.xml
 src/test/java/**
 
 src/main/java/me/xstr/api/OpenApiGeneratorApplication.java
+
+# Ignore .openapi-generator files and directories
+.openapi-generator/
+.openapi-generator-ignore
+**/.openapi-generator/
+**/.openapi-generator-ignore
