@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
@@ -70,7 +70,9 @@
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>${springdoc.version}</version>
-        </dependency>        <!-- OpenAPI Generator Annotations -->
+        </dependency>
+        
+        <!-- OpenAPI Generator Annotations -->
         <dependency>
             <groupId>org.openapitools</groupId>
             <artifactId>openapi-generator-maven-plugin</artifactId>
@@ -84,7 +86,8 @@
             </exclusions>
         </dependency>
 
-        <!-- Test Dependencies -->        <!-- Spring Boot Test Starter -->
+        <!-- Test Dependencies -->
+        <!-- Spring Boot Test Starter -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -95,7 +98,10 @@
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-simple</artifactId>
                 </exclusion>
-            </exclusions>        </dependency>        <!-- JUnit 5 (Jupiter) -->
+            </exclusions>
+        </dependency>
+        
+        <!-- JUnit 5 (Jupiter) -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -129,7 +135,6 @@
                             <inputSpec>${project.basedir}/api-spec.yml</inputSpec>
                             <generatorName>spring</generatorName>
                             <library>spring-boot</library>
-                            <!-- <configurationFile>${project.basedir}/spring-server-generator.yml</configurationFile> -->
                             <output>${project.basedir}</output>
                             <apiPackage>me.xstr.api.controller</apiPackage>
                             <modelPackage>me.xstr.api.model</modelPackage>
@@ -158,10 +163,12 @@
                                 <serializableModel>true</serializableModel>
                                 <openApiNullable>false</openApiNullable>
                                 <skipFormModel>true</skipFormModel>
-                                <generateAliasAsModel>false</generateAliasAsModel>                                <generateModelTests>true</generateModelTests>
+                                <generateAliasAsModel>false</generateAliasAsModel>
+                                <generateModelTests>true</generateModelTests>
                                 <generateApiTests>true</generateApiTests>
                                 <testPackage>me.xstr.api.test</testPackage>
-                                <generateControllerTests>true</generateControllerTests>                                <generateModelBuilders>true</generateModelBuilders>
+                                <generateControllerTests>true</generateControllerTests>
+                                <generateModelBuilders>true</generateModelBuilders>
                                 <modelNameSuffix></modelNameSuffix>
                                 <modelNamePrefix></modelNamePrefix>
                                 <apiNameSuffix>Controller</apiNameSuffix>
@@ -169,6 +176,34 @@
                                 <configPackage>me.xstr.api.configuration</configPackage>
                                 <appName>XstrMEApiApplication</appName>
                             </configOptions>
+                            <skipOverwrite>false</skipOverwrite>
+                            <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
+                            <removeOperationIdPrefix>false</removeOperationIdPrefix>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>typescript-fetch-client</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/api-spec.yml</inputSpec>
+                            <generatorName>typescript-axios</generatorName>  <!-- Different generator -->
+                            <output>${project.basedir}/src/main/typescript</output>                            <configOptions>
+                                <npmName>xstr-api-client</npmName>
+                                <npmVersion>1.0.0</npmVersion>
+                                <supportsES6>true</supportsES6>
+                                <withInterfaces>true</withInterfaces>
+                                <stringEnums>true</stringEnums>
+                                <modelPropertyNaming>camelCase</modelPropertyNaming>
+                                <enumPropertyNaming>UPPERCASE</enumPropertyNaming>
+                                <withSeparateModelsAndApi>true</withSeparateModelsAndApi>
+                                <apiPackage>me/xstr/api/apis</apiPackage>
+                                <modelPackage>me/xstr/api/models</modelPackage>                         
+                                </configOptions>
+                            <skipOverwrite>false</skipOverwrite>
+                            <skipIfSpecIsUnchanged>false</skipIfSpecIsUnchanged>
+                            <removeOperationIdPrefix>false</removeOperationIdPrefix>
                         </configuration>
                     </execution>
                 </executions>
@@ -183,7 +218,8 @@
                     <source>17</source>
                     <target>17</target>
                 </configuration>
-            </plugin>            <!-- Build Helper Maven Plugin to add generated sources -->
+            </plugin>
+            
             <!-- Maven Surefire Plugin for running tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -197,7 +233,99 @@
                     </includes>
                     <useSystemClassLoader>false</useSystemClassLoader>
                 </configuration>
+            </plugin>            <!-- Note: TypeScript builds are handled manually with npm -->
+            <!-- To build TypeScript client: -->
+            <!-- 1. cd src/main/typescript && npm install && npm run build -->
+            <!-- 2. cd src/test/typescript && npm install && npm test -->
+
+            <!-- Maven Clean Plugin to clean TypeScript artifacts -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.3.2</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>src/main/typescript/dist</directory>
+                            <includes>
+                                <include>**/*</include>
+                            </includes>
+                        </fileset>
+                        <fileset>
+                            <directory>src/main/typescript/node_modules</directory>
+                            <includes>
+                                <include>**/*</include>
+                            </includes>
+                        </fileset>
+                        <fileset>
+                            <directory>src/test/typescript/coverage</directory>
+                            <includes>
+                                <include>**/*</include>
+                            </includes>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+
+            <!-- Exec Maven Plugin for additional Node.js tasks -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.1</version>
+                <executions>
+                    <!-- Run TypeScript tests from test directory -->
+                    <execution>
+                        <id>typescript-test</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>npm</executable>
+                            <workingDirectory>src/test/typescript</workingDirectory>
+                            <arguments>
+                                <argument>test</argument>
+                            </arguments>
+                            <skip>${skipTests}</skip>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Maven Resources Plugin for copying TypeScript artifacts -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-typescript-dist</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/typescript-client</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/typescript</directory>
+                                    <includes>
+                                        <include>dist/**/*</include>
+                                        <include>package.json</include>
+                                        <include>README.md</include>
+                                        <include>*.md</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>                </executions>
             </plugin>
         </plugins>
     </build>
+
+    <!-- Note: TypeScript builds are handled manually with npm -->
+    <!-- Available npm commands: -->
+    <!-- cd src/main/typescript && npm install && npm run build -->
+    <!-- cd src/test/typescript && npm install && npm test -->
+    <!-- cd src/main/typescript && npm run lint && npm run format -->
 </project>

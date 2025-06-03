@@ -1,0 +1,12 @@
+dist/
+node_modules/
+coverage/
+docs/
+*.log
+*.min.js
+*.bundle.js
+package-lock.json
+yarn.lock
+.nyc_output/
+build/
+lib/
