@@ -219,8 +219,7 @@
                     <target>17</target>
                 </configuration>
             </plugin>
-            
-            <!-- Maven Surefire Plugin for running tests -->
+              <!-- Maven Surefire Plugin for running tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -233,99 +232,26 @@
                     </includes>
                     <useSystemClassLoader>false</useSystemClassLoader>
                 </configuration>
-            </plugin>            <!-- Note: TypeScript builds are handled manually with npm -->
-            <!-- To build TypeScript client: -->
-            <!-- 1. cd src/main/typescript && npm install && npm run build -->
-            <!-- 2. cd src/test/typescript && npm install && npm test -->
-
-            <!-- Maven Clean Plugin to clean TypeScript artifacts -->
+            </plugin>
+            
+            <!-- OWASP Dependency Check for Security Scanning -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-clean-plugin</artifactId>
-                <version>3.3.2</version>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>9.0.7</version>
                 <configuration>
-                    <filesets>
-                        <fileset>
-                            <directory>src/main/typescript/dist</directory>
-                            <includes>
-                                <include>**/*</include>
-                            </includes>
-                        </fileset>
-                        <fileset>
-                            <directory>src/main/typescript/node_modules</directory>
-                            <includes>
-                                <include>**/*</include>
-                            </includes>
-                        </fileset>
-                        <fileset>
-                            <directory>src/test/typescript/coverage</directory>
-                            <includes>
-                                <include>**/*</include>
-                            </includes>
-                        </fileset>
-                    </filesets>
+                    <failBuildOnCVSS>9</failBuildOnCVSS>
+                    <skipTestScope>true</skipTestScope>
                 </configuration>
-            </plugin>
-
-            <!-- Exec Maven Plugin for additional Node.js tasks -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>3.1.1</version>
                 <executions>
-                    <!-- Run TypeScript tests from test directory -->
                     <execution>
-                        <id>typescript-test</id>
-                        <phase>test</phase>
                         <goals>
-                            <goal>exec</goal>
+                            <goal>check</goal>
                         </goals>
-                        <configuration>
-                            <executable>npm</executable>
-                            <workingDirectory>src/test/typescript</workingDirectory>
-                            <arguments>
-                                <argument>test</argument>
-                            </arguments>
-                            <skip>${skipTests}</skip>
-                        </configuration>
                     </execution>
-                </executions>
-            </plugin>
-
-            <!-- Maven Resources Plugin for copying TypeScript artifacts -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.3.1</version>
-                <executions>
-                    <execution>
-                        <id>copy-typescript-dist</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/typescript-client</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/main/typescript</directory>
-                                    <includes>
-                                        <include>dist/**/*</include>
-                                        <include>package.json</include>
-                                        <include>README.md</include>
-                                        <include>*.md</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>                </executions>
-            </plugin>
+                </executions>            </plugin>
         </plugins>
-    </build>    <!-- Note: TypeScript builds are handled manually with npm -->
-    <!-- Available npm commands: -->
-    <!-- cd src/main/typescript && npm install && npm run build -->
-    <!-- cd src/test/typescript && npm install && npm test -->
-    <!-- cd src/main/typescript && npm run lint && npm run format -->
+    </build>
 
     <!-- Maven Central Publication Profile -->
     <profiles>
