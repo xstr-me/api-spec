@@ -2,11 +2,11 @@
   "name": "xstr-api-client-tests",
   "version": "1.0.0",
   "private": true,
-  "description": "Test suite for xstr.me API client",
-  "scripts": {
+  "description": "Test suite for xstr.me API client",  "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "test:ci": "jest --ci --coverage --watchAll=false",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "install-deps": "cd ../../main/typescript && npm install"
   },

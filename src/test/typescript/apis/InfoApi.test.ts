@@ -1,68 +1,65 @@
 import { InfoApi } from '../../../main/typescript/me/xstr/api/apis/info-api';
 import { Configuration } from '../../../main/typescript/configuration';
 import { VersionResponse } from '../../../main/typescript/me/xstr/api/models/version-response';
+import { AxiosInstance } from 'axios';
 
 describe('InfoApi', () => {
   let infoApi: InfoApi;
-  const mockFetch = global.fetch as jest.MockedFunction<typeof fetch>;
+  let mockAxios: jest.Mocked<AxiosInstance>;
 
   beforeEach(() => {
+    mockAxios = {
+      get: jest.fn(),
+      post: jest.fn(),
+      put: jest.fn(),
+      delete: jest.fn(),
+      patch: jest.fn(),
+      head: jest.fn(),
+      options: jest.fn(),
+      request: jest.fn(),
+      defaults: {} as any,
+      interceptors: {} as any,
+      getUri: jest.fn(),
+    } as jest.Mocked<AxiosInstance>;
+
     const config = new Configuration({
       basePath: 'https://api.xstr.me',
     });
-    infoApi = new InfoApi(config);
-    mockFetch.mockClear();
+    infoApi = new InfoApi(config, undefined, mockAxios);
   });
+
   describe('getVersion', () => {
-    it('should successfully get version information', async () => {      const mockVersionResponse: VersionResponse = {
+    it('should successfully get version information', async () => {
+      const mockVersionResponse: VersionResponse = {
         version: '1.0.0',
         build: '123',
         timestamp: '2025-06-03T10:00:00Z'
       };
 
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
+      mockAxios.request.mockResolvedValueOnce({
+        data: mockVersionResponse,
         status: 200,
-        json: async () => mockVersionResponse,
-        headers: new Headers({ 'content-type': 'application/json' })
-      } as Response);
+        statusText: 'OK',
+        headers: { 'content-type': 'application/json' },
+        config: {}
+      });
 
       const result = await infoApi.getVersion();
       
-      expect(result).toEqual(mockVersionResponse);
-      expect(mockFetch).toHaveBeenCalledWith(
-        'https://api.xstr.me/info/version',
-        expect.objectContaining({
-          method: 'GET',
-          headers: expect.objectContaining({
-            'Accept': 'application/json'
-          })
-        })
-      );
-    });
+      expect(result.data).toEqual(mockVersionResponse);
+      expect(mockAxios.request).toHaveBeenCalledTimes(1);
+    });    it('should handle version API errors', async () => {
+      mockAxios.request.mockRejectedValueOnce(new Error('Not Found'));
 
-    it('should handle version API errors', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 404,
-        json: async () => ({ error: 'Not Found' }),
-        headers: new Headers({ 'content-type': 'application/json' })
-      } as Response);
-
-      await expect(infoApi.getVersion()).rejects.toThrow();
-      expect(mockFetch).toHaveBeenCalledTimes(1);
+      await expect(infoApi.getVersion()).rejects.toThrow('Not Found');
+      expect(mockAxios.request).toHaveBeenCalledTimes(1);
     });
 
     it('should handle malformed response', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        status: 200,
-        json: async () => { throw new Error('Invalid JSON'); },
-        headers: new Headers({ 'content-type': 'application/json' })
-      } as Response);
+      mockAxios.request.mockRejectedValueOnce(new Error('Invalid JSON'));
 
       await expect(infoApi.getVersion()).rejects.toThrow('Invalid JSON');
-      expect(mockFetch).toHaveBeenCalledTimes(1);
+      expect(mockAxios.request).toHaveBeenCalledTimes(1);
     });
   });
 });

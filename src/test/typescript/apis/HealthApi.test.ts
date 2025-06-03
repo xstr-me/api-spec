@@ -1,69 +1,110 @@
 import { HealthApi } from '../../../main/typescript/me/xstr/api/apis/health-api';
 import { Configuration } from '../../../main/typescript/configuration';
-import { HealthResponse } from '../../../main/typescript/me/xstr/api/models/health-response';
-import axios from 'axios';
-
-// Mock axios
-jest.mock('axios');
-const mockedAxios = axios as jest.Mocked<typeof axios>;
+import { HealthResponse, HealthResponseStatusEnum } from '../../../main/typescript/me/xstr/api/models/health-response';
+import { AxiosInstance } from 'axios';
 
 describe('HealthApi', () => {
   let healthApi: HealthApi;
+  let mockAxios: jest.Mocked<AxiosInstance>;
 
   beforeEach(() => {
+    mockAxios = {
+      get: jest.fn(),
+      post: jest.fn(),
+      put: jest.fn(),
+      delete: jest.fn(),
+      patch: jest.fn(),
+      head: jest.fn(),
+      options: jest.fn(),
+      request: jest.fn(),
+      defaults: {} as any,
+      interceptors: {} as any,
+      getUri: jest.fn(),
+    } as jest.Mocked<AxiosInstance>;
+
     const config = new Configuration({
       basePath: 'https://api.xstr.me',
     });
-    healthApi = new HealthApi(config);
-    mockedAxios.get.mockClear();
+    healthApi = new HealthApi(config, undefined, mockAxios);
   });
 
   describe('getHealth', () => {
-    it('should successfully get health status', async () => {      const mockHealthResponse: HealthResponse = {
-        status: 'healthy' as any,
+    it('should successfully get health status', async () => {
+      const mockHealthResponse: HealthResponse = {
+        status: HealthResponseStatusEnum.HEALTHY,
         timestamp: '2025-06-03T10:00:00Z',
         version: '1.0.0',
-        uptime: '10h 30m'
+        uptime: '5d 12h 30m'
       };
 
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
+      mockAxios.request.mockResolvedValueOnce({
+        data: mockHealthResponse,
         status: 200,
-        json: async () => mockHealthResponse,
-        headers: new Headers({ 'content-type': 'application/json' })
-      } as Response);
+        statusText: 'OK',
+        headers: { 'content-type': 'application/json' },
+        config: {}
+      });
 
       const result = await healthApi.getHealth();
       
-      expect(result).toEqual(mockHealthResponse);
-      expect(mockFetch).toHaveBeenCalledWith(
-        'https://api.xstr.me/health',
-        expect.objectContaining({
-          method: 'GET',
-          headers: expect.objectContaining({
-            'Accept': 'application/json'
-          })
-        })
-      );
+      expect(result.data).toEqual(mockHealthResponse);
+      expect(mockAxios.request).toHaveBeenCalledTimes(1);
     });
 
-    it('should handle API errors', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 500,
-        json: async () => ({ error: 'Internal Server Error' }),
-        headers: new Headers({ 'content-type': 'application/json' })
-      } as Response);
+    it('should handle unhealthy status', async () => {
+      const mockHealthResponse: HealthResponse = {
+        status: HealthResponseStatusEnum.UNHEALTHY,
+        timestamp: '2025-06-03T10:00:00Z',
+        version: '1.0.0'
+      };
 
-      await expect(healthApi.getHealth()).rejects.toThrow();
-      expect(mockFetch).toHaveBeenCalledTimes(1);
+      mockAxios.request.mockResolvedValueOnce({
+        data: mockHealthResponse,
+        status: 503,
+        statusText: 'Service Unavailable',
+        headers: { 'content-type': 'application/json' },
+        config: {}
+      });
+
+      const result = await healthApi.getHealth();
+      
+      expect(result.data.status).toBe(HealthResponseStatusEnum.UNHEALTHY);
+      expect(mockAxios.request).toHaveBeenCalledTimes(1);
+    });    it('should handle health API errors', async () => {
+      mockAxios.request.mockRejectedValueOnce(new Error('Internal Server Error'));
+
+      await expect(healthApi.getHealth()).rejects.toThrow('Internal Server Error');
+      expect(mockAxios.request).toHaveBeenCalledTimes(1);
     });
 
     it('should handle network errors', async () => {
-      mockFetch.mockRejectedValueOnce(new Error('Network error'));
+      mockAxios.request.mockRejectedValueOnce(new Error('Network Error'));
 
-      await expect(healthApi.getHealth()).rejects.toThrow('Network error');
-      expect(mockFetch).toHaveBeenCalledTimes(1);
+      await expect(healthApi.getHealth()).rejects.toThrow('Network Error');
+      expect(mockAxios.request).toHaveBeenCalledTimes(1);
+    });
+
+    it('should handle minimal health response', async () => {
+      const minimalHealthResponse: HealthResponse = {
+        status: HealthResponseStatusEnum.HEALTHY,
+        timestamp: '2025-06-03T10:00:00Z'
+      };
+
+      mockAxios.request.mockResolvedValueOnce({
+        data: minimalHealthResponse,
+        status: 200,
+        statusText: 'OK',
+        headers: { 'content-type': 'application/json' },
+        config: {}
+      });
+
+      const result = await healthApi.getHealth();
+      
+      expect(result.data.status).toBe(HealthResponseStatusEnum.HEALTHY);
+      expect(result.data.timestamp).toBe('2025-06-03T10:00:00Z');
+      expect(result.data.version).toBeUndefined();
+      expect(result.data.uptime).toBeUndefined();
+      expect(mockAxios.request).toHaveBeenCalledTimes(1);
     });
   });
 });

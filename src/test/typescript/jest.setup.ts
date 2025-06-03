@@ -13,7 +13,9 @@ global.console = {
 };
 
 // Mock axios for testing (since the generated client uses axios)
+import axios from 'axios';
 jest.mock('axios');
+export const mockAxios = axios as jest.Mocked<typeof axios>;
 
 // Setup default test timeout
 jest.setTimeout(10000);
