@@ -8,20 +8,17 @@ The project generates **Spring Boot Server** code from the OpenAPI specification
 
 ## Configuration Approach
 
-The project uses inline configuration in the Maven POM file for optimal compatibility with OpenAPI Generator 7.1.0. A separate YAML configuration file is maintained for documentation:
-
-- `spring-server-generator.yml` - Configuration reference for Spring Boot server generation
+The project uses inline configuration in the Maven POM file for optimal compatibility with OpenAPI Generator 7.1.0.
 
 > **Current Implementation**: The configuration is implemented inline in `pom.xml` for 
-> maximum compatibility and reliability. The YAML file serves as documentation and 
-> reference for all available configuration options.
+> maximum compatibility and reliability. All configuration options are centralized in the Maven plugin configuration.
 
 ### Benefits of This Approach
 
 1. **Reliability**: Inline configuration eliminates external file dependency issues
 2. **Maintainability**: All configuration is in one central location (pom.xml)
 3. **Compatibility**: Works consistently across different OpenAPI Generator versions
-4. **Documentation**: YAML reference file provides clear documentation of options
+4. **Simplicity**: No external configuration files to maintain or synchronize
 
 ## Generated Artifacts
 

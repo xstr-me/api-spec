@@ -129,7 +129,7 @@
                             <inputSpec>${project.basedir}/api-spec.yml</inputSpec>
                             <generatorName>spring</generatorName>
                             <library>spring-boot</library>
-                            <configurationFile>${project.basedir}/spring-server-generator.yml</configurationFile>
+                            <!-- <configurationFile>${project.basedir}/spring-server-generator.yml</configurationFile> -->
                             <output>${project.basedir}</output>
                             <apiPackage>me.xstr.api.controller</apiPackage>
                             <modelPackage>me.xstr.api.model</modelPackage>
