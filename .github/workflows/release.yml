@@ -123,11 +123,17 @@ jobs:
           
           # Install npm dependencies and audit
           npm ci
-          npm audit --audit-level=moderate
-
-      - name: Run tests
+          npm audit --audit-level=moderate      - name: Run tests
         run: |
           mvn clean test
+          
+          # Run TypeScript tests from their respective directories
+          cd src/main/typescript
+          npm ci
+          npm test
+          
+          cd ../../../src/test/typescript
+          npm ci
           npm test
 
       - name: Verify build artifacts
@@ -135,7 +141,7 @@ jobs:
           mvn clean package -DskipTests
           ls -la target/
           
-          # Verify TypeScript client generation
+          # Verify TypeScript client generation and build
           cd src/main/typescript
           npm run build
           ls -la dist/
@@ -230,9 +236,7 @@ jobs:
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: 'temurin'
-          cache: maven
-
-      - name: Install dependencies
+          cache: maven      - name: Install dependencies
         run: npm ci
 
       - name: Regenerate TypeScript client

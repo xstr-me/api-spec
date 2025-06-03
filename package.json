@@ -6,41 +6,14 @@
   "workspaces": [
     "src/main/typescript",
     "src/test/typescript"
-  ],
-  "scripts": {
+  ],  "scripts": {
     "preinstall": "echo 'Setting up workspace dependencies...'",
-    "install:all": "npm install && npm run install:client && npm run install:test",
-    "install:client": "cd src/main/typescript && npm install",
-    "install:test": "cd src/test/typescript && npm install",
-    "build": "npm run build:client",
-    "build:client": "cd src/main/typescript && npm run build",
-    "test": "npm run test:client && npm run test:integration",
-    "test:client": "cd src/main/typescript && npm test",
-    "test:integration": "cd src/test/typescript && npm test",
-    "test:coverage": "cd src/test/typescript && npm run test:coverage",
-    "lint": "npm run lint:client",
-    "lint:client": "cd src/main/typescript && npm run lint",
-    "lint:fix": "cd src/main/typescript && npm run lint:fix",
-    "format": "npm run format:client",
-    "format:client": "cd src/main/typescript && npm run format",
-    "validate": "npm run lint && npm run test",
-    "clean": "npm run clean:client && npm run clean:test",
-    "clean:client": "cd src/main/typescript && npm run clean",
-    "clean:test": "cd src/test/typescript && npm run clean",
-    "generate-docs": "cd src/main/typescript && npm run generate-docs",
-    "publish:prepare": "npm run clean && npm run install:all && npm run build && npm run test",
-    "publish:dry-run": "cd src/main/typescript && npm publish --dry-run",
-    "version:patch": "npm version patch && npm run version:sync",
-    "version:minor": "npm version minor && npm run version:sync", 
-    "version:major": "npm version major && npm run version:sync",
+    "validate:openapi": "npx @apidevtools/swagger-parser validate api-spec.yml",
+    "lint:openapi": "npx @redocly/cli lint api-spec.yml",
+    "docs:openapi": "npx @redocly/cli build-docs api-spec.yml --output docs/api-docs.html",
     "version:sync": "node scripts/sync-versions.js",
-    "audit": "npm audit && npm run audit:client && npm run audit:test",
-    "audit:client": "cd src/main/typescript && npm audit",
-    "audit:test": "cd src/test/typescript && npm audit",
-    "audit:fix": "npm audit fix && npm run audit:fix:client && npm run audit:fix:test",
-    "audit:fix:client": "cd src/main/typescript && npm audit fix",
-    "audit:fix:test": "cd src/test/typescript && npm audit fix"
-  },  "devDependencies": {
+    "workspace:audit": "npm audit && cd src/main/typescript && npm audit && cd ../../../src/test/typescript && npm audit"
+  },"devDependencies": {
     "semantic-release": "^22.0.12",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",

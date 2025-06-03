@@ -131,36 +131,42 @@ jobs:
       run: |
         echo "Generating TypeScript client from OpenAPI spec..."
         mvn generate-sources -q
-        
-    - name: Install TypeScript client dependencies
-      run: npm run install:client
+          - name: Install TypeScript client dependencies
+      run: |
+        cd src/main/typescript
+        npm install
       
     - name: Lint TypeScript code
       run: |
         echo "Linting TypeScript code..."
+        cd src/main/typescript
         npm run lint
         
     - name: Compile TypeScript client
       run: |
         echo "Compiling TypeScript client..."
-        npm run build:client
+        cd src/main/typescript
+        npm run build
         
     - name: Run TypeScript tests
       run: |
         echo "Running TypeScript tests..."
-        npm run test:client
+        cd src/main/typescript
+        npm run test
         
     - name: Run integration tests
       run: |
         echo "Running integration tests..."
-        npm run test:integration
+        cd src/test/typescript
+        npm install
+        npm run test
         
     - name: Generate test coverage
       run: |
         echo "Generating test coverage..."
+        cd src/main/typescript
         npm run test:coverage
-        
-    - name: Upload TypeScript test results
+          - name: Upload TypeScript test results
       uses: actions/upload-artifact@v4
       if: always()
       with:
@@ -205,10 +211,14 @@ jobs:
       run: |
         echo "Running OWASP Dependency Check for Java dependencies..."
         mvn org.owasp:dependency-check-maven:check -DfailBuildOnCVSS=9
-        
-    - name: NPM Security Audit
+          - name: NPM Security Audit
       run: |
-        echo "Running NPM security audit..."
+        echo "Running NPM security audit for main client..."
+        cd src/main/typescript
+        npm audit --audit-level=high || echo "NPM audit found high-severity issues"
+        
+        echo "Running NPM security audit for test utilities..."
+        cd ../../../src/test/typescript
         npm audit --audit-level=high || echo "NPM audit found high-severity issues"
         
     - name: Upload security scan results
@@ -248,18 +258,21 @@ jobs:
         key: ${{ runner.os }}-deps-${{ hashFiles('**/package-lock.json', '**/pom.xml') }}
         restore-keys: |
           ${{ runner.os }}-deps-
-          
-    - name: Install dependencies
+            - name: Install dependencies
       run: npm install
       
     - name: Generate TypeScript client
       run: mvn generate-sources -q
       
     - name: Install TypeScript dependencies
-      run: npm run install:client
+      run: |
+        cd src/main/typescript
+        npm install
       
     - name: Build TypeScript client
-      run: npm run build:client
+      run: |
+        cd src/main/typescript
+        npm run build
       
     - name: Generate API documentation
       run: |
@@ -270,9 +283,11 @@ jobs:
         npx @redocly/cli build-docs api-spec.yml --output docs/api-docs.html
         
         # Generate TypeScript client docs
-        npm run generate-docs
+        cd src/main/typescript
+        npm run generate-docs || echo "TypeScript docs generation not available"
         
         # Copy TypeScript docs to main docs folder
+        cd ../../..
         cp -r src/main/typescript/docs/* docs/ 2>/dev/null || echo "No TypeScript docs to copy"
         
     - name: Upload documentation

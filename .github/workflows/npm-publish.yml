@@ -61,8 +61,7 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
         fi
         echo "Detected version: $VERSION"
-        
-    - name: Get TypeScript client package info
+          - name: Get TypeScript client package info
       id: package
       run: |
         PACKAGE_NAME=$(node -p "require('./src/main/typescript/package.json').name")
@@ -82,22 +81,25 @@ jobs:
     - name: Install client dependencies
       run: |
         echo "Installing TypeScript client dependencies..."
-        npm run install:client
+        cd src/main/typescript
+        npm install
         
     - name: Synchronize versions
       run: |
         echo "Synchronizing version ${{ steps.version.outputs.version }} across workspace..."
-        npm run version:sync
+        node scripts/sync-versions.js
         
     - name: Lint TypeScript code
       run: |
         echo "Linting TypeScript code..."
+        cd src/main/typescript
         npm run lint
         
     - name: Run TypeScript compilation
       run: |
         echo "Compiling TypeScript client..."
-        npm run build:client
+        cd src/main/typescript
+        npm run build
         
     - name: Validate generated artifacts
       run: |
@@ -109,31 +111,36 @@ jobs:
         test -f src/main/typescript/dist/index.d.ts || (echo "Missing index.d.ts" && exit 1)
         
         echo "TypeScript client validation passed!"
-        
-    - name: Security audit
+          - name: Security audit
       run: |
         echo "Running security audit..."
-        npm run audit || echo "Security audit found issues - review required"
+        cd src/main/typescript
+        npm audit || echo "Security audit found issues - review required"
         
     - name: Run tests
       run: |
         echo "Running TypeScript client tests..."
-        npm run test:client
+        cd src/main/typescript
+        npm run test
         
     - name: Run integration tests
       run: |
         echo "Running integration tests..."
-        npm run test:integration
+        cd src/test/typescript
+        npm install
+        npm run test
         
     - name: Generate test coverage
       run: |
         echo "Generating test coverage report..."
+        cd src/main/typescript
         npm run test:coverage
         
     - name: Generate documentation
       run: |
         echo "Generating TypeScript client documentation..."
-        npm run generate-docs
+        cd src/main/typescript
+        npm run generate-docs || echo "Documentation generation not available"
         
     - name: Upload test artifacts
       uses: actions/upload-artifact@v4
@@ -177,19 +184,18 @@ jobs:
           
     - name: Install workspace dependencies
       run: npm install
-      
-    - name: Regenerate and build TypeScript client
+        - name: Regenerate and build TypeScript client
       run: |
         echo "Regenerating TypeScript client..."
         mvn clean generate-sources -q
-        npm run install:client
-        npm run build:client
+        cd src/main/typescript
+        npm install
+        npm run build
         
     - name: Update version in packages
       run: |
         echo "Updating version to ${{ needs.validate.outputs.version }}..."
-        npm version ${{ needs.validate.outputs.version }} --no-git-tag-version
-        npm run version:sync
+        node scripts/sync-versions.js
         
     - name: Verify package before publication
       run: |
