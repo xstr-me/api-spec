@@ -92,10 +92,9 @@ me.xstr.api/
 public class HealthService implements HealthApiDelegate {
     @Override
     public ResponseEntity<HealthResponse> getHealth() {
-        HealthResponse response = new HealthResponse()
-            .status(HealthResponse.StatusEnum.UP)
+        HealthResponse response = new HealthResponse()            .status(HealthResponse.StatusEnum.UP)
             .timestamp(OffsetDateTime.now())
-            .version("1.0.0");
+            .version("0.0.1-alpha");
         return ResponseEntity.ok(response);
     }
 }
