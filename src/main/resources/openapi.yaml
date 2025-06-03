@@ -1,0 +1,145 @@
+openapi: 3.0.3
+info:
+  description: |
+    OpenAPI specification for XStr.me services.
+
+    This API provides endpoints for managing and accessing XStr.me functionality.
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  title: XStr.me API
+  version: 0.0.1-alpha
+servers:
+- description: Production server
+  url: https://api.xstr.me/v1
+- description: Staging server
+  url: https://staging-api.xstr.me/v1
+- description: Local development server
+  url: http://localhost:8080/v1
+security:
+- BearerAuth: []
+tags:
+- description: Health check operations
+  name: Health
+- description: API information operations
+  name: Info
+paths:
+  /health:
+    get:
+      description: Returns the health status of the API
+      operationId: getHealth
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+          description: API is healthy
+        "503":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: API is unhealthy
+      summary: Health check endpoint
+      tags:
+      - Health
+      x-accepts: application/json
+      x-tags:
+      - tag: Health
+  /version:
+    get:
+      description: Returns the current version of the API
+      operationId: getVersion
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionResponse'
+          description: API version information
+      summary: Get API version
+      tags:
+      - Info
+      x-accepts: application/json
+      x-tags:
+      - tag: Info
+components:
+  schemas:
+    HealthResponse:
+      example:
+        status: healthy
+        timestamp: 2025-05-27T10:30:00Z
+        version: 0.0.1-alpha
+        uptime: 2d 5h 30m
+      properties:
+        status:
+          description: Health status of the API
+          enum:
+          - healthy
+          - unhealthy
+          type: string
+        timestamp:
+          description: Timestamp of the health check
+          format: date-time
+          type: string
+        version:
+          description: API version
+          type: string
+        uptime:
+          description: API uptime duration
+          example: 2d 5h 30m
+          type: string
+      required:
+      - status
+      - timestamp
+      type: object
+    VersionResponse:
+      example:
+        version: 0.0.1-alpha
+        build: abc123def
+        timestamp: 2025-05-27T08:00:00Z
+      properties:
+        version:
+          description: API version
+          type: string
+        build:
+          description: Build number or commit hash
+          type: string
+        timestamp:
+          description: Build timestamp
+          format: date-time
+          type: string
+      required:
+      - build
+      - version
+      type: object
+    ErrorResponse:
+      example:
+        error: SERVICE_UNAVAILABLE
+        message: The service is temporarily unavailable
+        timestamp: 2025-05-27T10:30:00Z
+      properties:
+        error:
+          description: Error code
+          type: string
+        message:
+          description: Human-readable error message
+          type: string
+        details:
+          description: Additional error details
+          type: object
+        timestamp:
+          description: Error timestamp
+          format: date-time
+          type: string
+      required:
+      - error
+      - message
+      type: object
+  securitySchemes:
+    BearerAuth:
+      bearerFormat: JWT
+      description: JWT token for authentication
+      scheme: bearer
+      type: http

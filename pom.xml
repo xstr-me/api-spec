@@ -70,14 +70,45 @@
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>${springdoc.version}</version>
-        </dependency>
-
-        <!-- OpenAPI Generator Annotations -->
+        </dependency>        <!-- OpenAPI Generator Annotations -->
         <dependency>
             <groupId>org.openapitools</groupId>
             <artifactId>openapi-generator-maven-plugin</artifactId>
             <version>${openapi-generator-maven-plugin.version}</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- Test Dependencies -->        <!-- Spring Boot Test Starter -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <version>${spring-boot.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+            </exclusions>        </dependency>        <!-- JUnit 5 (Jupiter) -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.10.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Hamcrest -->
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest</artifactId>
+            <version>2.2</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -99,7 +130,7 @@
                             <generatorName>spring</generatorName>
                             <library>spring-boot</library>
                             <configurationFile>${project.basedir}/spring-server-generator.yml</configurationFile>
-                            <output>${project.build.directory}/generated-sources</output>
+                            <output>${project.basedir}</output>
                             <apiPackage>me.xstr.api.controller</apiPackage>
                             <modelPackage>me.xstr.api.model</modelPackage>
                             <invokerPackage>me.xstr.api</invokerPackage>
@@ -127,9 +158,11 @@
                                 <serializableModel>true</serializableModel>
                                 <openApiNullable>false</openApiNullable>
                                 <skipFormModel>true</skipFormModel>
-                                <generateAliasAsModel>false</generateAliasAsModel>
-                                <generateModelTests>false</generateModelTests>
-                                <generateApiTests>false</generateApiTests>
+                                <generateAliasAsModel>false</generateAliasAsModel>                                <generateModelTests>true</generateModelTests>
+                                <generateApiTests>true</generateApiTests>
+                                <testPackage>me.xstr.api.test</testPackage>
+                                <generateControllerTests>true</generateControllerTests>
+                                <generateModelBuilders>true</generateModelBuilders>
                                 <modelNameSuffix></modelNameSuffix>
                                 <modelNamePrefix></modelNamePrefix>
                                 <apiNameSuffix>Controller</apiNameSuffix>
@@ -150,27 +183,20 @@
                     <source>17</source>
                     <target>17</target>
                 </configuration>
-            </plugin>
-
-            <!-- Build Helper Maven Plugin to add generated sources -->
+            </plugin>            <!-- Build Helper Maven Plugin to add generated sources -->
+            <!-- Maven Surefire Plugin for running tests -->
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.4.0</version>
-                <executions>
-                    <execution>
-                        <id>add-source</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>${project.build.directory}/generated-sources/src/main/java</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                </executions>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.2</version>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/*Tests.java</include>
+                        <include>**/*TestCase.java</include>
+                    </includes>
+                    <useSystemClassLoader>false</useSystemClassLoader>
+                </configuration>
             </plugin>
         </plugins>
     </build>

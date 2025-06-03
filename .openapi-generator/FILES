@@ -1,0 +1,15 @@
+README.md
+src/main/java/me/xstr/api/OpenApiGeneratorApplication.java
+src/main/java/me/xstr/api/RFC3339DateFormat.java
+src/main/java/me/xstr/api/configuration/HomeController.java
+src/main/java/me/xstr/api/configuration/SpringDocConfiguration.java
+src/main/java/me/xstr/api/controller/ApiUtil.java
+src/main/java/me/xstr/api/controller/HealthApi.java
+src/main/java/me/xstr/api/controller/HealthApiDelegate.java
+src/main/java/me/xstr/api/controller/InfoApi.java
+src/main/java/me/xstr/api/controller/InfoApiDelegate.java
+src/main/java/me/xstr/api/model/ErrorResponse.java
+src/main/java/me/xstr/api/model/HealthResponse.java
+src/main/java/me/xstr/api/model/VersionResponse.java
+src/main/resources/application.properties
+src/main/resources/openapi.yaml
