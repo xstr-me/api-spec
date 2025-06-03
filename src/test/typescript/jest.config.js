@@ -9,10 +9,10 @@ module.exports = {
   testMatch: [
     '**/__tests__/**/*.ts',
     '**/?(*.)+(spec|test).ts'
-  ],
-  transform: {
+  ],  transform: {
     '^.+\\.ts$': ['ts-jest', {
-      tsconfig: 'tsconfig.test.json'
+      tsconfig: 'tsconfig.test.json',
+      isolatedModules: true
     }]
   },
   collectCoverageFrom: [
