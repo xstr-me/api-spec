@@ -161,13 +161,13 @@
                                 <generateAliasAsModel>false</generateAliasAsModel>                                <generateModelTests>true</generateModelTests>
                                 <generateApiTests>true</generateApiTests>
                                 <testPackage>me.xstr.api.test</testPackage>
-                                <generateControllerTests>true</generateControllerTests>
-                                <generateModelBuilders>true</generateModelBuilders>
+                                <generateControllerTests>true</generateControllerTests>                                <generateModelBuilders>true</generateModelBuilders>
                                 <modelNameSuffix></modelNameSuffix>
                                 <modelNamePrefix></modelNamePrefix>
                                 <apiNameSuffix>Controller</apiNameSuffix>
                                 <basePackage>me.xstr.api</basePackage>
                                 <configPackage>me.xstr.api.configuration</configPackage>
+                                <appName>XstrMEApiApplication</appName>
                             </configOptions>
                         </configuration>
                     </execution>

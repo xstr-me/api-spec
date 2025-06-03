@@ -11,7 +11,7 @@ class SimpleApplicationTest {
     @Test
     void testApplicationClassExists() {
         // Test that the main application class can be instantiated
-        OpenApiGeneratorApplication app = new OpenApiGeneratorApplication();
+        XstrMEApiApplication app = new XstrMEApiApplication();
         assertNotNull(app);
     }
 
