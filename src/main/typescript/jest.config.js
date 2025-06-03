@@ -32,12 +32,11 @@ module.exports = {
       lines: 80,
       statements: 80
     }
-  },
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  },  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   testTimeout: 10000,
   verbose: true,
   setupFilesAfterEnv: [],
-  moduleNameMapping: {
+  moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1'
   }
 };

@@ -1,4 +1,4 @@
-import { ErrorResponse } from '@/models/ErrorResponse';
+import { ErrorResponse } from '../../../main/typescript/me/xstr/api/models/error-response';
 
 describe('ErrorResponse', () => {
   it('should create a valid ErrorResponse object', () => {

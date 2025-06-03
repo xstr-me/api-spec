@@ -1,4 +1,4 @@
-import { HealthResponse } from '@/models/HealthResponse';
+import { HealthResponse } from '../../../main/typescript/me/xstr/api/models/health-response';
 
 describe('HealthResponse', () => {
   it('should create a valid HealthResponse object', () => {

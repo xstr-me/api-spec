@@ -1,10 +1,9 @@
 /** @type {import('jest').Config} */
 module.exports = {
   preset: 'ts-jest',
-  testEnvironment: 'node',
-  roots: [
+  testEnvironment: 'node',  roots: [
     '<rootDir>',
-    '<rootDir>/../../main/typescript/src'
+    '<rootDir>/../../main/typescript'
   ],
   testMatch: [
     '**/__tests__/**/*.ts',
@@ -14,12 +13,11 @@ module.exports = {
       tsconfig: 'tsconfig.test.json',
       isolatedModules: true
     }]
-  },
-  collectCoverageFrom: [
-    '../../main/typescript/src/**/*.ts',
-    '!../../main/typescript/src/**/*.d.ts',
-    '!../../main/typescript/src/**/__tests__/**',
-    '!../../main/typescript/src/**/index.ts'
+  },  collectCoverageFrom: [
+    '../../main/typescript/**/*.ts',
+    '!../../main/typescript/**/*.d.ts',
+    '!../../main/typescript/**/__tests__/**',
+    '!../../main/typescript/**/index.ts'
   ],
   coverageDirectory: 'coverage',
   coverageReporters: [

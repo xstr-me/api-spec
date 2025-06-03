@@ -1,4 +1,4 @@
-import { VersionResponse } from '@/models/VersionResponse';
+import { VersionResponse } from '../../../main/typescript/me/xstr/api/models/version-response';
 
 describe('VersionResponse', () => {
   it('should create a valid VersionResponse object', () => {

@@ -1,6 +1,6 @@
-import { InfoApi } from '../../../main/typescript/src/apis/InfoApi';
-import { Configuration } from '../../../main/typescript/src/runtime';
-import { VersionResponse } from '../../../main/typescript/src/models/VersionResponse';
+import { InfoApi } from '../../../main/typescript/me/xstr/api/apis/info-api';
+import { Configuration } from '../../../main/typescript/configuration';
+import { VersionResponse } from '../../../main/typescript/me/xstr/api/models/version-response';
 
 describe('InfoApi', () => {
   let infoApi: InfoApi;
@@ -14,11 +14,10 @@ describe('InfoApi', () => {
     mockFetch.mockClear();
   });
   describe('getVersion', () => {
-    it('should successfully get version information', async () => {
-      const mockVersionResponse: VersionResponse = {
+    it('should successfully get version information', async () => {      const mockVersionResponse: VersionResponse = {
         version: '1.0.0',
         build: '123',
-        timestamp: new Date('2025-06-03T10:00:00Z')
+        timestamp: '2025-06-03T10:00:00Z'
       };
 
       mockFetch.mockResolvedValueOnce({

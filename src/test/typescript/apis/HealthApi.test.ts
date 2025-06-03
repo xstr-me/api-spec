@@ -1,24 +1,27 @@
-import { HealthApi } from '../../../main/typescript/src/apis/HealthApi';
-import { Configuration } from '../../../main/typescript/src/runtime';
-import { HealthResponse } from '../../../main/typescript/src/models/HealthResponse';
+import { HealthApi } from '../../../main/typescript/me/xstr/api/apis/health-api';
+import { Configuration } from '../../../main/typescript/configuration';
+import { HealthResponse } from '../../../main/typescript/me/xstr/api/models/health-response';
+import axios from 'axios';
+
+// Mock axios
+jest.mock('axios');
+const mockedAxios = axios as jest.Mocked<typeof axios>;
 
 describe('HealthApi', () => {
   let healthApi: HealthApi;
-  const mockFetch = global.fetch as jest.MockedFunction<typeof fetch>;
 
   beforeEach(() => {
     const config = new Configuration({
       basePath: 'https://api.xstr.me',
     });
     healthApi = new HealthApi(config);
-    mockFetch.mockClear();
+    mockedAxios.get.mockClear();
   });
 
   describe('getHealth', () => {
-    it('should successfully get health status', async () => {
-      const mockHealthResponse: HealthResponse = {
+    it('should successfully get health status', async () => {      const mockHealthResponse: HealthResponse = {
         status: 'healthy' as any,
-        timestamp: new Date('2025-06-03T10:00:00Z'),
+        timestamp: '2025-06-03T10:00:00Z',
         version: '1.0.0',
         uptime: '10h 30m'
       };

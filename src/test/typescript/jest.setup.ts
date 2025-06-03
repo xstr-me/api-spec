@@ -12,8 +12,8 @@ global.console = {
   // error: jest.fn(),
 };
 
-// Mock fetch for testing
-global.fetch = jest.fn();
+// Mock axios for testing (since the generated client uses axios)
+jest.mock('axios');
 
 // Setup default test timeout
 jest.setTimeout(10000);
