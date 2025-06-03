@@ -1,0 +1,40 @@
+# OpenAPI Generator Configuration for Java Client (REFERENCE ONLY)
+# 
+# This file serves as documentation and reference for the Java client configuration.
+# The actual configuration is currently implemented inline in pom.xml due to 
+# compatibility issues with external configuration files in OpenAPI Generator 7.1.0.
+#
+# Configuration Description:
+# - Generates OkHttp + Gson based Java client for API consumption
+# - Supports Java 8+ with Jakarta EE annotations
+# - Includes bean validation and proper serialization
+#
+# To use external configuration, update pom.xml to reference this file:
+# <configurationFile>${project.basedir}/java-client-generator.yml</configurationFile>
+
+generatorName: java
+library: okhttp-gson
+apiPackage: me.xstr.api.controller
+modelPackage: me.xstr.api.model
+invokerPackage: me.xstr.api
+additionalProperties:
+  java8: true
+  dateLibrary: java8
+  useJakartaEe: true
+  useBeanValidation: true
+  performBeanValidation: true
+  hideGenerationTimestamp: true
+  generateApiDocumentation: true
+  generateModelDocumentation: true
+  withXml: false
+  serializableModel: true
+  generateModelTests: false
+  generateApiTests: false
+  useOptional: true
+  openApiNullable: false
+  modelNameSuffix: ""
+  modelNamePrefix: ""
+  apiNameSuffix: "Api"
+  generateSupportingFiles: true
+  skipFormModel: false
+  generateAliasAsModel: false
