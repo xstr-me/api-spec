@@ -22,9 +22,5 @@
 # Then explicitly reverse the ignore rule for a single file:
 #!docs/README.md
 
-pom.xml
 
-# Ignore test files to prevent overwriting custom tests
-src/test/java/**
-
-src/main/java/me/xstr/api/OpenApiGeneratorApplication.java
+package.json

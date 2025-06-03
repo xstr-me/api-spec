@@ -1,0 +1,17 @@
+.gitignore
+.npmignore
+README.md
+api.ts
+base.ts
+common.ts
+configuration.ts
+git_push.sh
+index.ts
+me/xstr/api/apis/health-api.ts
+me/xstr/api/apis/info-api.ts
+me/xstr/api/models/error-response.ts
+me/xstr/api/models/health-response.ts
+me/xstr/api/models/index.ts
+me/xstr/api/models/version-response.ts
+tsconfig.esm.json
+tsconfig.json
