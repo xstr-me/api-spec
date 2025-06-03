@@ -1,0 +1,369 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: 'Release type'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+      dry_run:
+        description: 'Dry run (skip actual publishing)'
+        required: false
+        default: false
+        type: boolean
+  push:
+    branches:
+      - main
+      - master
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+      - 'LICENSE'
+
+env:
+  JAVA_VERSION: '17'
+  NODE_VERSION: '20'
+  MAVEN_OPTS: '-Xmx1024m'
+
+jobs:
+  prepare-release:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install semantic-release
+        run: npm install -g semantic-release @semantic-release/changelog @semantic-release/git
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Generate release
+        id: release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
+        run: |
+          if [ "$DRY_RUN" = "true" ]; then
+            echo "Running semantic-release in dry-run mode"
+            npx semantic-release --dry-run --debug
+            echo "release_created=false" >> $GITHUB_OUTPUT
+          else
+            npx semantic-release --debug
+            # Check if release was created by looking for new tag
+            LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+            if [ -n "$LATEST_TAG" ]; then
+              echo "release_created=true" >> $GITHUB_OUTPUT
+              echo "tag_name=$LATEST_TAG" >> $GITHUB_OUTPUT
+            else
+              echo "release_created=false" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+      - name: Extract version
+        id: version
+        run: |
+          VERSION=$(grep -o '<version>[^<]*</version>' pom.xml | head -1 | sed 's/<version>\(.*\)<\/version>/\1/')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Detected version: $VERSION"
+
+  validate-before-release:
+    needs: prepare-release
+    if: needs.prepare-release.outputs.release_created == 'true' || github.event.inputs.dry_run == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare-release.outputs.tag_name || github.sha }}
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Validate OpenAPI specification
+        run: |
+          mvn clean validate
+          mvn openapi-generator:generate -Dpackage.skip=true
+
+      - name: Run security scans
+        run: |
+          # Maven security scan
+          mvn org.owasp:dependency-check-maven:check -DfailBuildOnAnyVulnerability=false
+          
+          # Install npm dependencies and audit
+          npm ci
+          npm audit --audit-level=moderate
+
+      - name: Run tests
+        run: |
+          mvn clean test
+          npm test
+
+      - name: Verify build artifacts
+        run: |
+          mvn clean package -DskipTests
+          ls -la target/
+          
+          # Verify TypeScript client generation
+          cd src/main/typescript
+          npm run build
+          ls -la dist/
+
+  publish-maven:
+    needs: [prepare-release, validate-before-release]
+    if: needs.prepare-release.outputs.release_created == 'true' && github.event.inputs.dry_run != 'true'
+    runs-on: ubuntu-latest
+    environment: maven-central
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare-release.outputs.tag_name }}
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: maven
+          server-id: ossrh
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_CENTRAL_TOKEN
+          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+
+      - name: Configure Maven settings
+        run: |
+          mkdir -p ~/.m2
+          cat > ~/.m2/settings.xml << EOF
+          <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                                      http://maven.apache.org/xsd/settings-1.0.0.xsd">
+            <servers>
+              <server>
+                <id>ossrh</id>
+                <username>\${env.MAVEN_USERNAME}</username>
+                <password>\${env.MAVEN_CENTRAL_TOKEN}</password>
+              </server>
+            </servers>
+            <profiles>
+              <profile>
+                <id>ossrh</id>
+                <activation>
+                  <activeByDefault>true</activeByDefault>
+                </activation>
+                <properties>
+                  <gpg.executable>gpg</gpg.executable>
+                  <gpg.passphrase>\${env.MAVEN_GPG_PASSPHRASE}</gpg.passphrase>
+                </properties>
+              </profile>
+            </profiles>
+          </settings>
+          EOF
+
+      - name: Publish to Maven Central
+        env:
+          MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+          MAVEN_CENTRAL_TOKEN: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+        run: |
+          mvn clean deploy -Prelease -DskipTests
+          echo "Maven artifacts published successfully"
+
+      - name: Verify Maven Central deployment
+        run: |
+          echo "Verifying deployment to Maven Central staging repository..."
+          mvn nexus-staging:rc-list -Prelease
+
+  publish-npm:
+    needs: [prepare-release, validate-before-release]
+    if: needs.prepare-release.outputs.release_created == 'true' && github.event.inputs.dry_run != 'true'
+    runs-on: ubuntu-latest
+    environment: npm-registry
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare-release.outputs.tag_name }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Setup Java (for TypeScript generation)
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Regenerate TypeScript client
+        run: |
+          mvn clean generate-sources
+          cd src/main/typescript
+          npm ci
+          npm run build
+
+      - name: Sync versions
+        run: node scripts/sync-versions.js
+
+      - name: Run TypeScript tests
+        run: |
+          cd src/main/typescript
+          npm test
+          cd ../../../src/test/typescript
+          npm ci
+          npm test
+
+      - name: Generate documentation
+        run: |
+          cd src/main/typescript
+          npm run docs || echo "Documentation generation failed, continuing..."
+
+      - name: Publish TypeScript client
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          cd src/main/typescript
+          npm publish --access public
+          echo "TypeScript client published successfully"
+
+      - name: Publish TypeScript test utilities
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          cd src/test/typescript
+          npm publish --access public
+          echo "TypeScript test utilities published successfully"
+
+  create-github-release:
+    needs: [prepare-release, publish-maven, publish-npm]
+    if: needs.prepare-release.outputs.release_created == 'true' && github.event.inputs.dry_run != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare-release.outputs.tag_name }}
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build release artifacts
+        run: |
+          mvn clean package -DskipTests
+          mkdir -p release-artifacts
+          cp target/*.jar release-artifacts/
+          cp target/*.pom release-artifacts/
+
+      - name: Generate TypeScript artifacts
+        run: |
+          cd src/main/typescript
+          npm ci
+          npm run build
+          npm pack
+          cp *.tgz ../../../release-artifacts/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ needs.prepare-release.outputs.tag_name }}
+          name: Release ${{ needs.prepare-release.outputs.tag_name }}
+          body: |
+            ## Release ${{ needs.prepare-release.outputs.tag_name }}
+            
+            ### 📦 Published Artifacts
+            
+            **Maven Central:**
+            - Group ID: `io.github.gsa-ows`
+            - Artifact ID: `xstr-me-api-spec`
+            - Version: `${{ needs.prepare-release.outputs.version }}`
+            
+            **npm Registry:**
+            - Package: `@gsa-ows/xstr-me-api-spec`
+            - Version: `${{ needs.prepare-release.outputs.version }}`
+            
+            ### 🔗 Links
+            - [Maven Central Repository](https://central.sonatype.com/artifact/io.github.gsa-ows/xstr-me-api-spec)
+            - [npm Package](https://www.npmjs.com/package/@gsa-ows/xstr-me-api-spec)
+            - [Documentation](https://github.com/GSA-OWS/xstr.me/blob/main/api-spec/README.md)
+            
+            ### 📋 Changes
+            See the [CHANGELOG.md](CHANGELOG.md) for detailed changes in this release.
+          files: release-artifacts/*
+          draft: false
+          prerelease: false
+
+  notify-release:
+    needs: [prepare-release, create-github-release]
+    if: needs.prepare-release.outputs.release_created == 'true' && github.event.inputs.dry_run != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify teams
+        run: |
+          echo "🎉 Release ${{ needs.prepare-release.outputs.tag_name }} completed successfully!"
+          echo "📦 Maven Central: https://central.sonatype.com/artifact/io.github.gsa-ows/xstr-me-api-spec"
+          echo "📦 npm Registry: https://www.npmjs.com/package/@gsa-ows/xstr-me-api-spec"
+          echo "🔗 GitHub Release: https://github.com/GSA-OWS/xstr.me/releases/tag/${{ needs.prepare-release.outputs.tag_name }}"
+
+  rollback-on-failure:
+    needs: [prepare-release, publish-maven, publish-npm]
+    if: failure() && needs.prepare-release.outputs.release_created == 'true' && github.event.inputs.dry_run != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Delete release tag
+        run: |
+          git tag -d ${{ needs.prepare-release.outputs.tag_name }} || echo "Tag not found locally"
+          git push --delete origin ${{ needs.prepare-release.outputs.tag_name }} || echo "Tag not found on remote"
+
+      - name: Notify failure
+        run: |
+          echo "❌ Release ${{ needs.prepare-release.outputs.tag_name }} failed and has been rolled back"
+          echo "Please check the workflow logs for details"

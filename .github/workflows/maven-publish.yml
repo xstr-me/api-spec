@@ -5,23 +5,92 @@ on:
     tags:
       - 'v*'
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Perform a dry run without actual publication'
+        required: false
+        default: 'false'
+        type: boolean
 
 jobs:
-  publish-maven:
+  validate:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        
+    - name: Cache Maven dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+          
+    - name: Extract version from tag
+      id: version
+      run: |
+        if [[ "${{ github.ref_type }}" == "tag" ]]; then
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+        else
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+        fi
+        echo "Detected version: $VERSION"
+        
+    - name: Validate POM and dependencies
+      run: |
+        echo "Validating Maven POM..."
+        mvn validate
+        mvn dependency:analyze
+        mvn dependency:tree
+        
+    - name: Security scan with OWASP Dependency Check
+      run: |
+        echo "Running OWASP Dependency Check..."
+        mvn org.owasp:dependency-check-maven:check -DfailBuildOnCVSS=8
+        
+    - name: Run tests
+      run: |
+        echo "Running all tests..."
+        mvn clean test
+        
+    - name: Upload test reports
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-reports
+        path: |
+          target/surefire-reports/
+          target/dependency-check-report.html
+
+  publish-maven:
+    needs: validate
+    runs-on: ubuntu-latest
+    environment: maven-central
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
       
-    - name: Set up JDK 11
+    - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
-        java-version: '11'
+        java-version: '17'
         distribution: 'temurin'
         
     - name: Cache Maven dependencies
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.m2/repository
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -46,18 +115,92 @@ jobs:
               <password>${{ secrets.OSSRH_PASSWORD }}</password>
             </server>
           </servers>
+          <profiles>
+            <profile>
+              <id>ossrh</id>
+              <activation>
+                <activeByDefault>true</activeByDefault>
+              </activation>
+              <properties>
+                <gpg.executable>gpg</gpg.executable>
+                <gpg.passphrase>${{ secrets.GPG_PASSPHRASE }}</gpg.passphrase>
+              </properties>
+            </profile>
+          </profiles>
         </settings>
         EOF
         
-    - name: Publish to Maven Central
+    - name: Verify artifacts before publication
       run: |
-        mvn clean deploy -Prelease
+        echo "Building and verifying artifacts..."
+        mvn clean compile package -Prelease -DskipTests
+        
+        echo "Verifying JAR files..."
+        ls -la target/*.jar
+        
+        echo "Checking JAR contents..."
+        jar tf target/*.jar | head -20
+        
+        echo "Verifying signatures..."
+        ls -la target/*.asc 2>/dev/null || echo "No signature files found yet"
+        
+    - name: Publish to Maven Central (Dry Run)
+      if: ${{ inputs.dry_run == 'true' }}
+      run: |
+        echo "DRY RUN: Would publish to Maven Central with the following command:"
+        echo "mvn clean deploy -Prelease -DskipTests"
+        echo "Version: ${{ needs.validate.outputs.version }}"
+        
+    - name: Publish to Maven Central
+      if: ${{ inputs.dry_run != 'true' }}
+      run: |
+        echo "Publishing to Maven Central..."
+        mvn clean deploy -Prelease -DskipTests \
+          -Drevision=${{ needs.validate.outputs.version }}
       env:
         GPG_TTY: $(tty)
+        GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        
+    - name: Verify publication
+      if: ${{ inputs.dry_run != 'true' }}
+      run: |
+        echo "Verifying publication..."
+        sleep 30 # Wait for artifacts to be available
+        
+        # Check if artifacts are available in staging repository
+        STAGING_URL="https://s01.oss.sonatype.org/content/groups/staging/me/xstr/api-spec/${{ needs.validate.outputs.version }}/"
+        echo "Checking staging repository: $STAGING_URL"
+        
+        curl -f "$STAGING_URL" || echo "Staging repository not yet available"
         
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: maven-artifacts
-        path: target/*.jar
+        path: |
+          target/*.jar
+          target/*.pom
+          target/*.asc
+          
+    - name: Create release notes
+      if: ${{ inputs.dry_run != 'true' && github.ref_type == 'tag' }}
+      run: |
+        echo "# Release ${{ needs.validate.outputs.version }}" > release-notes.md
+        echo "" >> release-notes.md
+        echo "## Maven Central" >> release-notes.md
+        echo "This release has been published to Maven Central:" >> release-notes.md
+        echo "\`\`\`xml" >> release-notes.md
+        echo "<dependency>" >> release-notes.md
+        echo "    <groupId>me.xstr</groupId>" >> release-notes.md
+        echo "    <artifactId>api-spec</artifactId>" >> release-notes.md
+        echo "    <version>${{ needs.validate.outputs.version }}</version>" >> release-notes.md
+        echo "</dependency>" >> release-notes.md
+        echo "\`\`\`" >> release-notes.md
+        
+    - name: Upload release notes
+      if: ${{ inputs.dry_run != 'true' && github.ref_type == 'tag' }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: release-notes
+        path: release-notes.md
