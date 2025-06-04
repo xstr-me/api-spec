@@ -44,6 +44,16 @@ module.exports = {
         'no-console': 'off',
       },
     },
+    {
+      files: ['**/*.test.ts', '**/*.test.js', '**/jest.config.js', '**/jest.setup.ts'],
+      env: {
+        jest: true,
+        node: true,
+      },
+      rules: {
+        'no-console': 'off',
+      },
+    },
   ],
   ignorePatterns: [
     'node_modules/',
@@ -52,6 +62,9 @@ module.exports = {
     'target/',
     '**/*.d.ts',
     '.openapi-generator/',
+    'coverage/',
+    'docs/',
+    '*.log',
     // Temporarily disable all checks
     '**/*'
   ],
