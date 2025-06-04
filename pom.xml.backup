@@ -20,9 +20,6 @@
         <jakarta.validation.version>3.0.2</jakarta.validation.version>
         <jackson.version>2.15.3</jackson.version>
         <springdoc.version>2.3.0</springdoc.version>
-        <!-- TEMPORARILY DISABLE ALL CHECKS -->
-        <maven.test.skip>true</maven.test.skip>
-        <skipTests>true</skipTests>
     </properties>
 
     <dependencies>
@@ -138,7 +135,7 @@
                             <inputSpec>${project.basedir}/api-spec.yml</inputSpec>
                             <generatorName>spring</generatorName>
                             <library>spring-boot</library>
-                            <outputDir>${project.basedir}</outputDir>
+                            <output>${project.basedir}</output>
                             <apiPackage>me.xstr.api.controller</apiPackage>
                             <modelPackage>me.xstr.api.model</modelPackage>
                             <invokerPackage>me.xstr.api</invokerPackage>
@@ -191,9 +188,8 @@
                         </goals>
                         <configuration>
                             <inputSpec>${project.basedir}/api-spec.yml</inputSpec>
-                            <generatorName>typescript-axios</generatorName>
-                            <outputDir>${project.basedir}/src/main/typescript</outputDir>
-                            <configOptions>
+                            <generatorName>typescript-axios</generatorName>  <!-- Different generator -->
+                            <output>${project.basedir}/src/main/typescript</output>                            <configOptions>
                                 <npmName>xstr-api-client</npmName>
                                 <npmVersion>1.0.0</npmVersion>
                                 <supportsES6>true</supportsES6>
@@ -203,8 +199,8 @@
                                 <enumPropertyNaming>UPPERCASE</enumPropertyNaming>
                                 <withSeparateModelsAndApi>true</withSeparateModelsAndApi>
                                 <apiPackage>me/xstr/api/apis</apiPackage>
-                                <modelPackage>me/xstr/api/models</modelPackage>
-                            </configOptions>
+                                <modelPackage>me/xstr/api/models</modelPackage>                         
+                                </configOptions>
                             <skipOverwrite>false</skipOverwrite>
                             <skipIfSpecIsUnchanged>false</skipIfSpecIsUnchanged>
                             <removeOperationIdPrefix>false</removeOperationIdPrefix>
@@ -222,9 +218,7 @@
                     <source>17</source>
                     <target>17</target>
                 </configuration>
-            </plugin>
-
-            <!-- Maven Surefire Plugin for running tests - TEMPORARILY DISABLED -->
+            </plugin>              <!-- Maven Surefire Plugin for running tests - TEMPORARILY DISABLED -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -239,8 +233,7 @@
                     <useSystemClassLoader>false</useSystemClassLoader>
                 </configuration>
             </plugin>
-
-            <!-- OWASP Dependency Check for Security Scanning - TEMPORARILY DISABLED -->
+              <!-- OWASP Dependency Check for Security Scanning - TEMPORARILY DISABLED -->
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
@@ -255,12 +248,10 @@
                         <goals>
                             <goal>check</goal>
                         </goals>
-                    </execution>
-                </executions>
+                    </execution>                </executions>
             </plugin>
             
-            <!-- Frontend Maven Plugin for npm integration - TEMPORARILY DISABLED -->
-            <!--
+            <!-- Frontend Maven Plugin for npm integration -->
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
@@ -273,6 +264,7 @@
                 </configuration>
                 
                 <executions>
+                    <!-- Install Node and npm -->
                     <execution>
                         <id>install-node-and-npm</id>
                         <goals>
@@ -281,6 +273,7 @@
                         <phase>initialize</phase>
                     </execution>
                     
+                    <!-- Install npm dependencies -->
                     <execution>
                         <id>npm-install</id>
                         <goals>
@@ -292,6 +285,7 @@
                         </configuration>
                     </execution>
                     
+                    <!-- Validate OpenAPI spec -->
                     <execution>
                         <id>npm-validate-openapi</id>
                         <goals>
@@ -303,6 +297,7 @@
                         </configuration>
                     </execution>
                     
+                    <!-- Format and lint check -->
                     <execution>
                         <id>npm-lint</id>
                         <goals>
@@ -314,6 +309,7 @@
                         </configuration>
                     </execution>
                     
+                    <!-- Build npm workspace -->
                     <execution>
                         <id>npm-build</id>
                         <goals>
@@ -325,6 +321,7 @@
                         </configuration>
                     </execution>
                     
+                    <!-- Run npm tests -->
                     <execution>
                         <id>npm-test</id>
                         <goals>
@@ -337,7 +334,6 @@
                     </execution>
                 </executions>
             </plugin>
-            -->
         </plugins>
     </build>
 
