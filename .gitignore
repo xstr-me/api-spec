@@ -4,3 +4,6 @@ target/
 **/node_modules/
 
 **/coverage/
+
+# VS Code workspace settings (user-specific)
+.vscode/settings.json
