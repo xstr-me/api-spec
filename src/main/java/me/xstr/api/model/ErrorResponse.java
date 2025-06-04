@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import java.time.OffsetDateTime;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.lang.Nullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import jakarta.validation.Valid;
@@ -21,7 +22,7 @@ import jakarta.annotation.Generated;
  * ErrorResponse
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.13.0")
 public class ErrorResponse implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -55,7 +56,7 @@ public class ErrorResponse implements Serializable {
   /**
    * Error code
    * @return error
-  */
+   */
   @NotNull 
   @Schema(name = "error", description = "Error code", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("error")
@@ -75,7 +76,7 @@ public class ErrorResponse implements Serializable {
   /**
    * Human-readable error message
    * @return message
-  */
+   */
   @NotNull 
   @Schema(name = "message", description = "Human-readable error message", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("message")
@@ -95,7 +96,7 @@ public class ErrorResponse implements Serializable {
   /**
    * Additional error details
    * @return details
-  */
+   */
   
   @Schema(name = "details", description = "Additional error details", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("details")
@@ -115,7 +116,7 @@ public class ErrorResponse implements Serializable {
   /**
    * Error timestamp
    * @return timestamp
-  */
+   */
   @Valid 
   @Schema(name = "timestamp", description = "Error timestamp", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("timestamp")

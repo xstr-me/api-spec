@@ -14,6 +14,7 @@
     "lint:openapi": "npx @redocly/cli lint api-spec.yml",
     "validate:config": "node -e \"JSON.parse(require('fs').readFileSync('openapi-generator-config/typescript-axios.json', 'utf8'))\" && echo \"Config file is valid JSON\"",
     "generate:typescript": "npx @openapitools/openapi-generator-cli generate -c openapi-generator-config/typescript-axios.json",
+    "generate:java": "npx @openapitools/openapi-generator-cli generate -c openapi-generator-config/spring-server.json",
     "generate:clean": "rimraf src/main/typescript/.openapi-generator src/main/typescript/git_push.sh",
     "generate:client": "npm run validate:config && npm run version:config && npm run generate:typescript && npm run generate:clean",
     "lint:eslint": "eslint . --ext .js,.ts",
