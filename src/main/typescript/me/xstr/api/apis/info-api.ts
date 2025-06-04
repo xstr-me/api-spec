@@ -14,15 +14,15 @@
 
 
 import type { Configuration } from '../../../../configuration';
-import type { AxiosPromise, AxiosInstance, AxiosRequestConfig } from 'axios';
+import type { AxiosPromise, AxiosInstance, RawAxiosRequestConfig } from 'axios';
 import globalAxios from 'axios';
 // Some imports not used depending on template conditions
 // @ts-ignore
 import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObject, setBearerAuthToObject, setOAuthToObject, setSearchParams, serializeDataIfNeeded, toPathString, createRequestFunction } from '../../../../common';
 // @ts-ignore
-import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError, operationServerMap } from '../../../../base';
+import { BASE_PATH, COLLECTION_FORMATS, type RequestArgs, BaseAPI, RequiredError, operationServerMap } from '../../../../base';
 // @ts-ignore
-import { VersionResponse } from '../../../../me/xstr/api/models';
+import type { VersionResponse } from '../../../../me/xstr/api/models';
 /**
  * InfoApi - axios parameter creator
  * @export
@@ -35,7 +35,7 @@ export const InfoApiAxiosParamCreator = function (configuration?: Configuration)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getVersion: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getVersion: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/version`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -79,11 +79,11 @@ export const InfoApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getVersion(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<VersionResponse>> {
+        async getVersion(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<VersionResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getVersion(options);
-            const index = configuration?.serverIndex ?? 0;
-            const operationBasePath = operationServerMap['InfoApi.getVersion']?.[index]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['InfoApi.getVersion']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
     }
 };
@@ -101,7 +101,7 @@ export const InfoApiFactory = function (configuration?: Configuration, basePath?
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getVersion(options?: any): AxiosPromise<VersionResponse> {
+        getVersion(options?: RawAxiosRequestConfig): AxiosPromise<VersionResponse> {
             return localVarFp.getVersion(options).then((request) => request(axios, basePath));
         },
     };
@@ -120,7 +120,7 @@ export interface InfoApiInterface {
      * @throws {RequiredError}
      * @memberof InfoApiInterface
      */
-    getVersion(options?: AxiosRequestConfig): AxiosPromise<VersionResponse>;
+    getVersion(options?: RawAxiosRequestConfig): AxiosPromise<VersionResponse>;
 
 }
 
@@ -138,7 +138,7 @@ export class InfoApi extends BaseAPI implements InfoApiInterface {
      * @throws {RequiredError}
      * @memberof InfoApi
      */
-    public getVersion(options?: AxiosRequestConfig) {
+    public getVersion(options?: RawAxiosRequestConfig) {
         return InfoApiFp(this.configuration).getVersion(options).then((request) => request(this.axios, this.basePath));
     }
 }

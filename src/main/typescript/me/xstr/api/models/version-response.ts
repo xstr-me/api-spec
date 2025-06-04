@@ -34,9 +34,9 @@ export interface VersionResponse {
     'build': string;
     /**
      * Build timestamp
-     * @type {string}
+     * @type {Date}
      * @memberof VersionResponse
      */
-    'timestamp'?: string;
+    'timestamp'?: Date;
 }
 
