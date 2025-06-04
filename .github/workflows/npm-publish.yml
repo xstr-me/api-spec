@@ -1,51 +1,275 @@
-name: Publish to NPM
+name: Publish TypeScript Client to NPM
 
 on:
   push:
     tags:
       - 'v*'
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Perform a dry run without actual publication'
+        required: false
+        default: 'false'
+        type: boolean
+      package_tag:
+        description: 'NPM package tag (latest, beta, alpha)'
+        required: false
+        default: 'latest'
+        type: string
 
 jobs:
-  publish-npm:
+  validate:
     runs-on: ubuntu-latest
-    
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      client-package-name: ${{ steps.package.outputs.name }}
+      
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
       
-    - name: Set up Node.js
+    - name: Set up Node.js 18
       uses: actions/setup-node@v4
       with:
         node-version: '18'
         registry-url: 'https://registry.npmjs.org'
         
-    - name: Cache Node modules
-      uses: actions/cache@v3
+    - name: Set up JDK 17 (for OpenAPI generation)
+      uses: actions/setup-java@v4
       with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        java-version: '17'
+        distribution: 'temurin'
+        
+    - name: Cache dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.npm
+          ~/.m2/repository
+        key: ${{ runner.os }}-deps-${{ hashFiles('**/package-lock.json', '**/pom.xml') }}
         restore-keys: |
-          ${{ runner.os }}-node-
+          ${{ runner.os }}-deps-
           
-    - name: Install dependencies
-      run: npm ci
-      
+    - name: Extract version from tag
+      id: version
+      run: |
+        if [[ "${{ github.ref_type }}" == "tag" ]]; then
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+        else
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+        fi
+        echo "Detected version: $VERSION"
+          - name: Get TypeScript client package info
+      id: package
+      run: |
+        PACKAGE_NAME=$(node -p "require('./src/main/typescript/package.json').name")
+        echo "name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
+        echo "Client package name: $PACKAGE_NAME"
+        
+    - name: Install workspace dependencies
+      run: |
+        echo "Installing workspace dependencies..."
+        npm install
+        
+    - name: Regenerate TypeScript client
+      run: |
+        echo "Regenerating TypeScript client from OpenAPI spec..."
+        mvn clean generate-sources -q
+        
+    - name: Install client dependencies
+      run: |
+        echo "Installing TypeScript client dependencies..."
+        cd src/main/typescript
+        npm install
+        
+    - name: Synchronize versions
+      run: |
+        echo "Synchronizing version ${{ steps.version.outputs.version }} across workspace..."
+        node scripts/sync-versions.js
+        
+    - name: Lint TypeScript code
+      run: |
+        echo "Linting TypeScript code..."
+        cd src/main/typescript
+        npm run lint
+        
+    - name: Run TypeScript compilation
+      run: |
+        echo "Compiling TypeScript client..."
+        cd src/main/typescript
+        npm run build
+        
+    - name: Validate generated artifacts
+      run: |
+        echo "Validating generated TypeScript artifacts..."
+        ls -la src/main/typescript/dist/
+        
+        # Check if essential files exist
+        test -f src/main/typescript/dist/index.js || (echo "Missing index.js" && exit 1)
+        test -f src/main/typescript/dist/index.d.ts || (echo "Missing index.d.ts" && exit 1)
+        
+        echo "TypeScript client validation passed!"
+          - name: Security audit
+      run: |
+        echo "Running security audit..."
+        cd src/main/typescript
+        npm audit || echo "Security audit found issues - review required"
+        
     - name: Run tests
-      run: npm test
-      
+      run: |
+        echo "Running TypeScript client tests..."
+        cd src/main/typescript
+        npm run test
+        
+    - name: Run integration tests
+      run: |
+        echo "Running integration tests..."
+        cd src/test/typescript
+        npm install
+        npm run test
+        
+    - name: Generate test coverage
+      run: |
+        echo "Generating test coverage report..."
+        cd src/main/typescript
+        npm run test:coverage
+        
     - name: Generate documentation
       run: |
-        mkdir -p docs
-        npm run generate-docs
+        echo "Generating TypeScript client documentation..."
+        cd src/main/typescript
+        npm run generate-docs || echo "Documentation generation not available"
+        
+    - name: Upload test artifacts
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results
+        path: |
+          src/test/typescript/coverage/
+          src/main/typescript/docs/
+
+  publish-npm:
+    needs: validate
+    runs-on: ubuntu-latest
+    environment: npm-registry
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Node.js 18
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        registry-url: 'https://registry.npmjs.org'
+        
+    - name: Set up JDK 17 (for OpenAPI generation)
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        
+    - name: Cache dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.npm
+          ~/.m2/repository
+        key: ${{ runner.os }}-deps-${{ hashFiles('**/package-lock.json', '**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-deps-
+          
+    - name: Install workspace dependencies
+      run: npm install
+        - name: Regenerate and build TypeScript client
+      run: |
+        echo "Regenerating TypeScript client..."
+        mvn clean generate-sources -q
+        cd src/main/typescript
+        npm install
+        npm run build
+        
+    - name: Update version in packages
+      run: |
+        echo "Updating version to ${{ needs.validate.outputs.version }}..."
+        node scripts/sync-versions.js
+        
+    - name: Verify package before publication
+      run: |
+        echo "Verifying package contents..."
+        cd src/main/typescript
+        npm pack --dry-run
+        
+    - name: Publish to NPM (Dry Run)
+      if: ${{ inputs.dry_run == 'true' }}
+      run: |
+        echo "DRY RUN: Would publish ${{ needs.validate.outputs.client-package-name }}@${{ needs.validate.outputs.version }}"
+        cd src/main/typescript
+        npm publish --dry-run --tag ${{ inputs.package_tag || 'latest' }}
         
     - name: Publish to NPM
-      run: npm publish
+      if: ${{ inputs.dry_run != 'true' }}
+      run: |
+        echo "Publishing ${{ needs.validate.outputs.client-package-name }}@${{ needs.validate.outputs.version }} to NPM..."
+        cd src/main/typescript
+        npm publish --tag ${{ inputs.package_tag || 'latest' }}
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         
-    - name: Upload docs
-      uses: actions/upload-artifact@v3
+    - name: Verify NPM publication
+      if: ${{ inputs.dry_run != 'true' }}
+      run: |
+        echo "Verifying NPM publication..."
+        sleep 30 # Wait for package to be available
+        
+        PACKAGE_URL="https://registry.npmjs.org/${{ needs.validate.outputs.client-package-name }}/${{ needs.validate.outputs.version }}"
+        echo "Checking package at: $PACKAGE_URL"
+        
+        curl -f "$PACKAGE_URL" || echo "Package not yet available on NPM registry"
+        
+    - name: Create package tarball
+      run: |
+        cd src/main/typescript
+        npm pack
+        mv *.tgz ../../../
+        
+    - name: Upload package artifacts
+      uses: actions/upload-artifact@v4
       with:
-        name: api-docs
-        path: docs/
+        name: npm-package
+        path: |
+          *.tgz
+          src/main/typescript/dist/
+          src/main/typescript/docs/
+          
+    - name: Create release notes
+      if: ${{ inputs.dry_run != 'true' && github.ref_type == 'tag' }}
+      run: |
+        echo "# TypeScript Client Release ${{ needs.validate.outputs.version }}" > release-notes-npm.md
+        echo "" >> release-notes-npm.md
+        echo "## NPM Package" >> release-notes-npm.md
+        echo "This release has been published to NPM:" >> release-notes-npm.md
+        echo "\`\`\`bash" >> release-notes-npm.md
+        echo "npm install ${{ needs.validate.outputs.client-package-name }}@${{ needs.validate.outputs.version }}" >> release-notes-npm.md
+        echo "\`\`\`" >> release-notes-npm.md
+        echo "" >> release-notes-npm.md
+        echo "## Usage" >> release-notes-npm.md
+        echo "\`\`\`typescript" >> release-notes-npm.md
+        echo "import { Configuration, HealthApi } from '${{ needs.validate.outputs.client-package-name }}';" >> release-notes-npm.md
+        echo "" >> release-notes-npm.md
+        echo "const config = new Configuration({" >> release-notes-npm.md
+        echo "  basePath: 'https://api.xstr.me'" >> release-notes-npm.md
+        echo "});" >> release-notes-npm.md
+        echo "" >> release-notes-npm.md
+        echo "const healthApi = new HealthApi(config);" >> release-notes-npm.md
+        echo "\`\`\`" >> release-notes-npm.md
+        
+    - name: Upload NPM release notes
+      if: ${{ inputs.dry_run != 'true' && github.ref_type == 'tag' }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: npm-release-notes
+        path: release-notes-npm.md

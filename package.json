@@ -1,0 +1,48 @@
+{
+  "name": "xstr-api-spec-workspace",
+  "version": "1.0.0",
+  "description": "Workspace for Xstr.me API Specification and generated clients",
+  "private": true,
+  "workspaces": [
+    "src/main/typescript",
+    "src/test/typescript"
+  ],  "scripts": {
+    "preinstall": "echo 'Setting up workspace dependencies...'",
+    "validate:openapi": "npx @apidevtools/swagger-parser validate api-spec.yml",
+    "lint:openapi": "npx @redocly/cli lint api-spec.yml",
+    "docs:openapi": "npx @redocly/cli build-docs api-spec.yml --output docs/api-docs.html",
+    "version:sync": "node scripts/sync-versions.js",
+    "workspace:audit": "npm audit && cd src/main/typescript && npm audit && cd ../../../src/test/typescript && npm audit"
+  },"devDependencies": {
+    "semantic-release": "^22.0.12",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^9.2.6",
+    "@semantic-release/npm": "^11.0.2",
+    "rimraf": "^5.0.5",
+    "cross-env": "^7.0.3",
+    "@apidevtools/swagger-parser": "^10.1.0",
+    "@redocly/cli": "^1.5.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xstr-me/api-spec.git"
+  },
+  "keywords": [
+    "xstr-api",
+    "openapi",
+    "typescript",
+    "workspace",
+    "ci-cd"
+  ],
+  "author": "Xstr.me Development Team",
+  "license": "MIT",
+  "homepage": "https://github.com/xstr-me/api-spec#readme",
+  "bugs": {
+    "url": "https://github.com/xstr-me/api-spec/issues"
+  }
+}
