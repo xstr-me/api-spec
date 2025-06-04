@@ -2,11 +2,11 @@
   "generatorName": "spring",
   "library": "spring-boot",
   "inputSpec": "./api-spec.yml",
-  "outputDir": ".",
+  "outputDir": "./",
   "apiPackage": "me.xstr.api.controller",
   "modelPackage": "me.xstr.api.model",
-  "invokerPackage": "me.xstr.api",
-  "additionalProperties": {
+  "invokerPackage": "me.xstr.api",  "additionalProperties": {
+    "sourceFolder": "src/main/java",
     "java8": true,
     "useJakartaEe": true,
     "useSpringBoot3": true,
@@ -17,7 +17,7 @@
     "annotationLibrary": "swagger2",
     "interfaceOnly": false,
     "delegatePattern": true,
-    "serviceInterface": true,
+    "serviceInterface": false,
     "serviceImplementation": false,
     "skipDefaultInterface": false,
     "useTags": true,
