@@ -2,74 +2,74 @@ name: PHP CI and Packagist Publishing
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
     tags:
       - 'v*'
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    
+
     strategy:
       matrix:
         php: ['8.1', '8.2', '8.3']
         symfony: ['6.4', '7.0']
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Set up PHP ${{ matrix.php }}
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: ${{ matrix.php }}
-        extensions: mbstring, xml, ctype, iconv, intl, dom, filter, json, yaml
-        coverage: xdebug
-        
-    - name: Get composer cache directory
-      id: composer-cache
-      run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-      
-    - name: Cache composer dependencies
-      uses: actions/cache@v3
-      with:
-        path: ${{ steps.composer-cache.outputs.dir }}
-        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-composer-
-          
-    - name: Install dependencies
-      run: |
-        composer install --prefer-dist --no-progress --no-interaction
-        composer require "symfony/yaml:^${{ matrix.symfony }}" --no-update
-        composer update --prefer-dist --no-progress --no-interaction
-        
-    - name: Validate API specification
-      run: composer run-script validate-spec
-      
-    - name: Run PHPStan analysis
-      run: composer run-script analyse
-      
-    - name: Run tests
-      run: composer run-script test
-      
-    - name: Upload coverage reports
-      if: matrix.php == '8.2' && matrix.symfony == '7.0'
-      uses: codecov/codecov-action@v3
-      with:
-        file: ./coverage.xml
-        fail_ci_if_error: true
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring, xml, ctype, iconv, intl, dom, filter, json, yaml
+          coverage: xdebug
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: |
+          composer install --prefer-dist --no-progress --no-interaction
+          composer require "symfony/yaml:^${{ matrix.symfony }}" --no-update
+          composer update --prefer-dist --no-progress --no-interaction
+
+      - name: Validate API specification
+        run: composer run-script validate-spec
+
+      - name: Run PHPStan analysis
+        run: composer run-script analyse
+
+      - name: Run tests
+        run: composer run-script test
+
+      - name: Upload coverage reports
+        if: matrix.php == '8.2' && matrix.symfony == '7.0'
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage.xml
+          fail_ci_if_error: true
 
   packagist-webhook:
     needs: test
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
-    
+
     steps:
-    - name: Trigger Packagist update
-      run: |
-        curl -XPOST -H'content-type:application/json' \
-          'https://packagist.org/api/update-package?username=${{ secrets.PACKAGIST_USERNAME }}&apiToken=${{ secrets.PACKAGIST_TOKEN }}' \
-          -d'{"repository":{"url":"https://github.com/xstr-me/api-spec"}}'
+      - name: Trigger Packagist update
+        run: |
+          curl -XPOST -H'content-type:application/json' \
+            'https://packagist.org/api/update-package?username=${{ secrets.PACKAGIST_USERNAME }}&apiToken=${{ secrets.PACKAGIST_TOKEN }}' \
+            -d'{"repository":{"url":"https://github.com/xstr-me/api-spec"}}'

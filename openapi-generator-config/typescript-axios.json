@@ -1,0 +1,23 @@
+{
+  "generatorName": "typescript-axios",
+  "inputSpec": "./api-spec.yml",
+  "outputDir": "src/main/typescript",
+  "additionalProperties": {
+    "npmName": "xstr-api-client",
+    "npmVersion": "1.0.0",
+    "supportsES6": true,
+    "typescriptThreePlus": true,
+    "withInterfaces": true,
+    "stringEnums": true,
+    "modelPropertyNaming": "camelCase",
+    "enumPropertyNaming": "UPPERCASE",
+    "withSeparateModelsAndApi": true,
+    "modelPackage": "me/xstr/api/models",
+    "apiPackage": "me/xstr/api/apis"
+  },
+  "removeOperationIdPrefix": false,
+  "typeMappings": {
+    "DateTime": "Date",
+    "date": "Date"
+  }
+}

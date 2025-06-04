@@ -44,7 +44,8 @@ paths:
       summary: Health check endpoint
       tags:
       - Health
-      x-accepts: application/json
+      x-accepts:
+      - application/json
       x-tags:
       - tag: Health
   /version:
@@ -61,7 +62,8 @@ paths:
       summary: Get API version
       tags:
       - Info
-      x-accepts: application/json
+      x-accepts:
+      - application/json
       x-tags:
       - tag: Info
 components:

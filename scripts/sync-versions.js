@@ -18,23 +18,23 @@ console.log(`Synchronizing version ${version} across workspace...`);
 // Workspace packages to update
 const workspacePackages = [
   'src/main/typescript/package.json',
-  'src/test/typescript/package.json'
+  'src/test/typescript/package.json',
 ];
 
 let updated = 0;
 
 workspacePackages.forEach(packagePath => {
   const fullPath = path.join(__dirname, '..', packagePath);
-  
+
   if (fs.existsSync(fullPath)) {
     try {
       const package = JSON.parse(fs.readFileSync(fullPath, 'utf8'));
       const oldVersion = package.version;
-      
+
       package.version = version;
-      
+
       fs.writeFileSync(fullPath, JSON.stringify(package, null, 2) + '\n');
-      
+
       console.log(`✓ Updated ${packagePath}: ${oldVersion} → ${version}`);
       updated++;
     } catch (error) {
@@ -54,9 +54,12 @@ if (fs.existsSync(pomPath)) {
     let pomContent = fs.readFileSync(pomPath, 'utf8');
     const versionRegex = /<version>([^<]+)<\/version>/;
     const match = pomContent.match(versionRegex);
-    
+
     if (match && match[1] !== version) {
-      pomContent = pomContent.replace(versionRegex, `<version>${version}</version>`);
+      pomContent = pomContent.replace(
+        versionRegex,
+        `<version>${version}</version>`
+      );
       fs.writeFileSync(pomPath, pomContent);
       console.log(`✓ Updated pom.xml version: ${match[1]} → ${version}`);
     } else {

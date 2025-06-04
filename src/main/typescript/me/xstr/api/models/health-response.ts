@@ -28,10 +28,10 @@ export interface HealthResponse {
     'status': HealthResponseStatusEnum;
     /**
      * Timestamp of the health check
-     * @type {string}
+     * @type {Date}
      * @memberof HealthResponse
      */
-    'timestamp': string;
+    'timestamp': Date;
     /**
      * API version
      * @type {string}

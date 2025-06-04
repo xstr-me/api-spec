@@ -2,17 +2,20 @@
 
 ## Summary
 
-Successfully migrated the OpenAPI Generator configuration from a dual client/server project to a single Spring Boot-focused project.
+Successfully migrated the OpenAPI Generator configuration from a dual client/server project to a
+single Spring Boot-focused project.
 
 ## Changes Made
 
 ### 1. POM Configuration ✅
+
 - **Removed**: Java client generation execution block
 - **Simplified**: Single Spring Boot server generation execution
 - **Cleaned**: Removed client-specific dependencies (OkHttp, Gson, GsonFire)
 - **Optimized**: Focused dependencies on Spring Boot ecosystem only
 
 ### 2. Dependencies Optimization ✅
+
 - **Kept**: Spring Boot starters (web, validation)
 - **Kept**: Jakarta validation APIs
 - **Kept**: Jackson JSON processing
@@ -21,11 +24,13 @@ Successfully migrated the OpenAPI Generator configuration from a dual client/ser
 - **Removed**: Gson JSON processing (client-specific)
 
 ### 3. File Cleanup ✅
+
 - **Removed**: `java-client-generator.yml` (no longer needed)
 - **Removed**: `pom.xml.backup` (corrupted backup)
 - **Kept**: `spring-server-generator.yml` (documentation reference)
 
 ### 4. Documentation Update ✅
+
 - **Updated**: `OPENAPI-GENERATION.md` to reflect single project approach
 - **Removed**: References to client generation
 - **Added**: Clear Spring Boot-focused examples
@@ -34,6 +39,7 @@ Successfully migrated the OpenAPI Generator configuration from a dual client/ser
 ## Generated Code Structure
 
 The project now generates clean Spring Boot server code at:
+
 ```
 target/generated-sources/src/main/java/me/xstr/api/
 ├── controller/           # REST controllers and interfaces
@@ -61,14 +67,17 @@ target/generated-sources/src/main/java/me/xstr/api/
 ## Usage
 
 Generate Spring Boot server code:
+
 ```bash
 mvn clean generate-sources
 ```
 
 The generated code provides:
+
 - Controller interfaces for API contracts
 - Delegate interfaces for service implementation
 - Model classes for request/response data
 - Spring Boot integration ready
 
-This configuration is now optimized for Spring Boot server development while maintaining clean separation of concerns and modern Java practices.
+This configuration is now optimized for Spring Boot server development while maintaining clean
+separation of concerns and modern Java practices.

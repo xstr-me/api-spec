@@ -15,7 +15,7 @@ Module system
 * CommonJS
 * ES6 module system
 
-It can be used in both TypeScript and JavaScript. In TypeScript, the definition should be automatically resolved via `package.json`. ([Reference](http://www.typescriptlang.org/docs/handbook/typings-for-npm-packages.html))
+It can be used in both TypeScript and JavaScript. In TypeScript, the definition will be automatically resolved via `package.json`. ([Reference](https://www.typescriptlang.org/docs/handbook/declaration-files/consumption.html))
 
 ### Building
 
@@ -27,7 +27,7 @@ npm run build
 
 ### Publishing
 
-First build the package then run ```npm publish```
+First build the package then run `npm publish`
 
 ### Consuming
 
@@ -43,3 +43,32 @@ _unPublished (not recommended):_
 
 ```
 npm install PATH_TO_GENERATED_PACKAGE --save
+```
+
+### Documentation for API Endpoints
+
+All URIs are relative to *https://api.xstr.me/v1*
+
+Class | Method | HTTP request | Description
+------------ | ------------- | ------------- | -------------
+*HealthApi* | [**getHealth**](docs/HealthApi.md#gethealth) | **GET** /health | Health check endpoint
+*InfoApi* | [**getVersion**](docs/InfoApi.md#getversion) | **GET** /version | Get API version
+
+
+### Documentation For Models
+
+ - [ErrorResponse](docs/ErrorResponse.md)
+ - [HealthResponse](docs/HealthResponse.md)
+ - [VersionResponse](docs/VersionResponse.md)
+
+
+<a id="documentation-for-authorization"></a>
+## Documentation For Authorization
+
+
+Authentication schemes defined for the API:
+<a id="BearerAuth"></a>
+### BearerAuth
+
+- **Type**: Bearer authentication (JWT)
+
