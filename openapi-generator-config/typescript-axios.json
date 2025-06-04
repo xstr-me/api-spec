@@ -1,6 +1,6 @@
 {
   "generatorName": "typescript-axios",
-  "inputSpec": "api-spec.yml",
+  "inputSpec": "./api-spec.yml",
   "outputDir": "src/main/typescript",
   "additionalProperties": {
     "npmName": "xstr-api-client",
@@ -8,31 +8,16 @@
     "supportsES6": true,
     "typescriptThreePlus": true,
     "withInterfaces": true,
-    "useSingleRequestParameter": true,
-    "withoutRuntimeChecks": false,
+    "stringEnums": true,
+    "modelPropertyNaming": "camelCase",
     "enumPropertyNaming": "UPPERCASE",
     "withSeparateModelsAndApi": true,
-    "modelPackage": "models",
-    "apiPackage": "apis"
+    "modelPackage": "me/xstr/api/models",
+    "apiPackage": "me/xstr/api/apis"
   },
-  "modelNameSuffix": "",
-  "apiNameSuffix": "Api",
-  "removeOperationIdPrefix": true,
-  "globalProperties": {
-    "supportingFiles": true,
-    "models": true,
-    "apis": true,
-    "modelTests": false,
-    "apiTests": false,
-    "modelDocs": false,
-    "apiDocs": false
-  },
+  "removeOperationIdPrefix": false,
   "typeMappings": {
     "DateTime": "Date",
     "date": "Date"
-  },
-  "importMappings": {},
-  "instantiationTypes": {},
-  "languageSpecificPrimitives": [],
-  "reservedWordsMappings": {}
+  }
 }
