@@ -7,7 +7,7 @@ describe('VersionResponse', () => {
       buildNumber: '123',
       buildDate: '2025-06-03T10:00:00Z',
       gitCommit: 'abc123def',
-      environment: 'production'
+      environment: 'production',
     };
 
     expect(versionResponse).toBeDefined();
@@ -20,39 +20,39 @@ describe('VersionResponse', () => {
 
   it('should handle different environment values', () => {
     const environments = ['development', 'staging', 'production'];
-    
+
     environments.forEach(environment => {
       const versionResponse: VersionResponse = {
         version: '1.0.0',
         buildNumber: '123',
         buildDate: '2025-06-03T10:00:00Z',
         gitCommit: 'abc123def',
-        environment
+        environment,
       };
-      
+
       expect(versionResponse.environment).toBe(environment);
     });
   });
 
   it('should handle semantic version formats', () => {
     const versions = ['1.0.0', '2.1.3', '0.0.1-alpha', '1.2.3-beta.1'];
-    
+
     versions.forEach(version => {
       const versionResponse: VersionResponse = {
         version,
         buildNumber: '123',
         buildDate: '2025-06-03T10:00:00Z',
         gitCommit: 'abc123def',
-        environment: 'production'
+        environment: 'production',
       };
-      
+
       expect(versionResponse.version).toBe(version);
     });
   });
 
   it('should handle optional properties', () => {
     const minimalResponse: VersionResponse = {
-      version: '1.0.0'
+      version: '1.0.0',
     };
 
     expect(minimalResponse.buildNumber).toBeUndefined();

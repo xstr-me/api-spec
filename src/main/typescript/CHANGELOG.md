@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - Initial TypeScript client generation from OpenAPI specification
 - Support for Vue.js, React, and Angular frameworks
 - Axios-based HTTP client implementation
@@ -26,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2025-06-03
 
 ### Added
+
 - Initial release of Xstr.me API TypeScript client
 - Health and Info API endpoints
 - TypeScript type definitions for all models

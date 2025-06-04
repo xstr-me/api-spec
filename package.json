@@ -6,23 +6,80 @@
   "workspaces": [
     "src/main/typescript",
     "src/test/typescript"
-  ],  "scripts": {
+  ],
+  "scripts": {
     "preinstall": "echo 'Setting up workspace dependencies...'",
-    "validate:openapi": "npx @apidevtools/swagger-parser validate api-spec.yml",
+    "postinstall": "husky install",
+    "validate:openapi": "npx @redocly/cli lint api-spec.yml",
     "lint:openapi": "npx @redocly/cli lint api-spec.yml",
+    "lint:eslint": "eslint . --ext .js,.ts",
+    "lint:eslint:fix": "eslint . --ext .js,.ts --fix",
     "docs:openapi": "npx @redocly/cli build-docs api-spec.yml --output docs/api-docs.html",
     "version:sync": "node scripts/sync-versions.js",
-    "workspace:audit": "npm audit && cd src/main/typescript && npm audit && cd ../../../src/test/typescript && npm audit"
-  },"devDependencies": {
-    "semantic-release": "^22.0.12",
+    "workspace:audit": "npm audit && cd src/main/typescript && npm audit && cd ../../../src/test/typescript && npm audit",
+    "format": "prettier --write \"**/*.{json,md,yml,yaml,ts,js}\" --ignore-path .gitignore",
+    "format:check": "prettier --check \"**/*.{json,md,yml,yaml,ts,js}\" --ignore-path .gitignore",
+    "lint": "npm run lint:openapi && npm run lint:eslint && npm run format:check",
+    "lint:fix": "npm run lint:eslint:fix && npm run format",
+    "clean": "rimraf docs/api-docs.html dist/ node_modules/.cache/",
+    "build": "npm run validate:openapi && npm run docs:openapi",
+    "test": "npm run validate:openapi && npm run lint",
+    "dev": "npm run build && npm run docs:serve",
+    "docs:serve": "npx http-server docs -p 8080 -o",
+    "prepare": "husky install",
+    "workspace:install": "npm install && npm run workspace:install:all",
+    "workspace:install:all": "npm install --workspaces",
+    "workspace:clean": "npm run clean && npm run clean --workspaces",
+    "workspace:build": "npm run build --workspaces",
+    "workspace:test": "npm run test --workspaces",
+    "workspace:lint": "npm run lint --workspaces",
+    "release": "semantic-release",
+    "maven:validate": "mvn validate",
+    "maven:compile": "mvn compile",
+    "maven:generate": "mvn generate-sources",
+    "maven:package": "mvn package",
+    "maven:clean": "mvn clean",
+    "ci:test": "npm run test && npm run workspace:test",
+    "ci:build": "npm run build && npm run workspace:build",
+    "ci:lint": "npm run lint && npm run workspace:lint",
+    "dev:utils": "node scripts/dev-utils.js"
+  },
+  "devDependencies": {
+    "@apidevtools/swagger-parser": "^10.1.0",
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@redocly/cli": "^1.5.0",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^9.2.6",
     "@semantic-release/npm": "^11.0.2",
-    "rimraf": "^5.0.5",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "chalk": "^5.3.0",
+    "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
-    "@apidevtools/swagger-parser": "^10.1.0",
-    "@redocly/cli": "^1.5.0"
+    "dotenv": "^16.3.1",
+    "eslint": "^8.56.0",
+    "http-server": "^14.1.1",
+    "husky": "^8.0.3",
+    "inquirer": "^9.2.12",
+    "lint-staged": "^15.2.0",
+    "nodemon": "^3.0.2",
+    "prettier": "^3.1.1",
+    "rimraf": "^5.0.5",
+    "semantic-release": "^22.0.12"
+  },
+  "lint-staged": {
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ],
+    "*.{ts,js}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "api-spec.yml": [
+      "npm run validate:openapi"
+    ]
   },
   "engines": {
     "node": ">=18.0.0",

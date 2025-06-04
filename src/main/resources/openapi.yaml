@@ -10,32 +10,32 @@ info:
   title: XStr.me API
   version: 0.0.1-alpha
 servers:
-- description: Production server
-  url: https://api.xstr.me/v1
-- description: Staging server
-  url: https://staging-api.xstr.me/v1
-- description: Local development server
-  url: http://localhost:8080/v1
+  - description: Production server
+    url: https://api.xstr.me/v1
+  - description: Staging server
+    url: https://staging-api.xstr.me/v1
+  - description: Local development server
+    url: http://localhost:8080/v1
 security:
-- BearerAuth: []
+  - BearerAuth: []
 tags:
-- description: Health check operations
-  name: Health
-- description: API information operations
-  name: Info
+  - description: Health check operations
+    name: Health
+  - description: API information operations
+    name: Info
 paths:
   /health:
     get:
       description: Returns the health status of the API
       operationId: getHealth
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/HealthResponse'
           description: API is healthy
-        "503":
+        '503':
           content:
             application/json:
               schema:
@@ -43,16 +43,16 @@ paths:
           description: API is unhealthy
       summary: Health check endpoint
       tags:
-      - Health
+        - Health
       x-accepts: application/json
       x-tags:
-      - tag: Health
+        - tag: Health
   /version:
     get:
       description: Returns the current version of the API
       operationId: getVersion
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
@@ -60,10 +60,10 @@ paths:
           description: API version information
       summary: Get API version
       tags:
-      - Info
+        - Info
       x-accepts: application/json
       x-tags:
-      - tag: Info
+        - tag: Info
 components:
   schemas:
     HealthResponse:
@@ -76,8 +76,8 @@ components:
         status:
           description: Health status of the API
           enum:
-          - healthy
-          - unhealthy
+            - healthy
+            - unhealthy
           type: string
         timestamp:
           description: Timestamp of the health check
@@ -91,8 +91,8 @@ components:
           example: 2d 5h 30m
           type: string
       required:
-      - status
-      - timestamp
+        - status
+        - timestamp
       type: object
     VersionResponse:
       example:
@@ -111,8 +111,8 @@ components:
           format: date-time
           type: string
       required:
-      - build
-      - version
+        - build
+        - version
       type: object
     ErrorResponse:
       example:
@@ -134,8 +134,8 @@ components:
           format: date-time
           type: string
       required:
-      - error
-      - message
+        - error
+        - message
       type: object
   securitySchemes:
     BearerAuth:

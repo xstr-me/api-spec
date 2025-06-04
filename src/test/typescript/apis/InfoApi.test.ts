@@ -33,7 +33,7 @@ describe('InfoApi', () => {
       const mockVersionResponse: VersionResponse = {
         version: '1.0.0',
         build: '123',
-        timestamp: '2025-06-03T10:00:00Z'
+        timestamp: '2025-06-03T10:00:00Z',
       };
 
       mockAxios.request.mockResolvedValueOnce({
@@ -41,14 +41,15 @@ describe('InfoApi', () => {
         status: 200,
         statusText: 'OK',
         headers: { 'content-type': 'application/json' },
-        config: {}
+        config: {},
       });
 
       const result = await infoApi.getVersion();
-      
+
       expect(result.data).toEqual(mockVersionResponse);
       expect(mockAxios.request).toHaveBeenCalledTimes(1);
-    });    it('should handle version API errors', async () => {
+    });
+    it('should handle version API errors', async () => {
       mockAxios.request.mockRejectedValueOnce(new Error('Not Found'));
 
       await expect(infoApi.getVersion()).rejects.toThrow('Not Found');

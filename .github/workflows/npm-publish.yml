@@ -48,8 +48,8 @@ jobs:
           ~/.m2/repository
         key: ${{ runner.os }}-deps-${{ hashFiles('**/package-lock.json', '**/pom.xml') }}
         restore-keys: |
-          ${{ runner.os }}-deps-
-          
+                    ${{ runner.os }}-deps-
+
     - name: Extract version from tag
       id: version
       run: |
@@ -61,7 +61,8 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
         fi
         echo "Detected version: $VERSION"
-          - name: Get TypeScript client package info
+
+    - name: Get TypeScript client package info
       id: package
       run: |
         PACKAGE_NAME=$(node -p "require('./src/main/typescript/package.json').name")
@@ -83,8 +84,7 @@ jobs:
         echo "Installing TypeScript client dependencies..."
         cd src/main/typescript
         npm install
-        
-    - name: Synchronize versions
+          - name: Synchronize versions
       run: |
         echo "Synchronizing version ${{ steps.version.outputs.version }} across workspace..."
         node scripts/sync-versions.js
@@ -100,7 +100,7 @@ jobs:
         echo "Compiling TypeScript client..."
         cd src/main/typescript
         npm run build
-        
+
     - name: Validate generated artifacts
       run: |
         echo "Validating generated TypeScript artifacts..."
@@ -111,7 +111,8 @@ jobs:
         test -f src/main/typescript/dist/index.d.ts || (echo "Missing index.d.ts" && exit 1)
         
         echo "TypeScript client validation passed!"
-          - name: Security audit
+
+    - name: Security audit
       run: |
         echo "Running security audit..."
         cd src/main/typescript

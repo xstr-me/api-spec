@@ -1,7 +1,10 @@
 import { HealthApi } from '../../../main/typescript/me/xstr/api/apis/health-api';
 import { InfoApi } from '../../../main/typescript/me/xstr/api/apis/info-api';
 import { Configuration } from '../../../main/typescript/configuration';
-import { HealthResponse, HealthResponseStatusEnum } from '../../../main/typescript/me/xstr/api/models/health-response';
+import {
+  HealthResponse,
+  HealthResponseStatusEnum,
+} from '../../../main/typescript/me/xstr/api/models/health-response';
 import { VersionResponse } from '../../../main/typescript/me/xstr/api/models/version-response';
 import { ErrorResponse } from '../../../main/typescript/me/xstr/api/models/error-response';
 import { AxiosInstance } from 'axios';
@@ -29,7 +32,7 @@ describe('API Integration Tests', () => {
 
     config = new Configuration({
       basePath: 'https://api.xstr.me/v1',
-      accessToken: 'test-bearer-token'
+      accessToken: 'test-bearer-token',
     });
 
     healthApi = new HealthApi(config, undefined, mockAxios);
@@ -40,7 +43,7 @@ describe('API Integration Tests', () => {
     it('should create APIs with shared configuration', () => {
       expect(healthApi).toBeDefined();
       expect(infoApi).toBeDefined();
-      
+
       // Both APIs should share the same configuration
       expect((healthApi as any).configuration).toBe(config);
       expect((infoApi as any).configuration).toBe(config);
@@ -48,13 +51,15 @@ describe('API Integration Tests', () => {
 
     it('should handle different base paths', () => {
       const customConfig = new Configuration({
-        basePath: 'https://custom.api.com/v2'
+        basePath: 'https://custom.api.com/v2',
       });
-      
+
       const customHealthApi = new HealthApi(customConfig, undefined, mockAxios);
       const customInfoApi = new InfoApi(customConfig, undefined, mockAxios);
-      
-      expect((customHealthApi as any).basePath).toBe('https://custom.api.com/v2');
+
+      expect((customHealthApi as any).basePath).toBe(
+        'https://custom.api.com/v2'
+      );
       expect((customInfoApi as any).basePath).toBe('https://custom.api.com/v2');
     });
 
@@ -64,13 +69,15 @@ describe('API Integration Tests', () => {
         accessToken: 'integration-test-token',
         username: 'testuser',
         password: 'testpass',
-        apiKey: 'test-api-key'
+        apiKey: 'test-api-key',
       });
-      
+
       const authHealthApi = new HealthApi(authConfig, undefined, mockAxios);
       const authInfoApi = new InfoApi(authConfig, undefined, mockAxios);
-      
-      expect((authHealthApi as any).configuration.accessToken).toBe('integration-test-token');
+
+      expect((authHealthApi as any).configuration.accessToken).toBe(
+        'integration-test-token'
+      );
       expect((authInfoApi as any).configuration.username).toBe('testuser');
     });
   });
@@ -81,7 +88,7 @@ describe('API Integration Tests', () => {
         status: HealthResponseStatusEnum.HEALTHY,
         timestamp: '2025-06-03T10:00:00Z',
         version: '1.0.0',
-        uptime: '5d 12h 30m'
+        uptime: '5d 12h 30m',
       };
 
       const mockVersionResponse: VersionResponse = {
@@ -91,7 +98,7 @@ describe('API Integration Tests', () => {
         buildNumber: '456',
         buildDate: '2025-06-01T08:00:00Z',
         gitCommit: 'abc123def456',
-        environment: 'production'
+        environment: 'production',
       };
 
       mockAxios.request
@@ -100,14 +107,14 @@ describe('API Integration Tests', () => {
           status: 200,
           statusText: 'OK',
           headers: { 'content-type': 'application/json' },
-          config: {}
+          config: {},
         })
         .mockResolvedValueOnce({
           data: mockVersionResponse,
           status: 200,
           statusText: 'OK',
           headers: { 'content-type': 'application/json' },
-          config: {}
+          config: {},
         });
 
       // First check health
@@ -142,13 +149,13 @@ describe('API Integration Tests', () => {
       const unhealthyResponse: HealthResponse = {
         status: HealthResponseStatusEnum.UNHEALTHY,
         timestamp: '2025-06-03T10:00:00Z',
-        version: '1.0.0'
+        version: '1.0.0',
       };
 
       const versionResponse: VersionResponse = {
         version: '1.0.0',
         build: '123',
-        timestamp: '2025-06-03T10:00:00Z'
+        timestamp: '2025-06-03T10:00:00Z',
       };
 
       mockAxios.request
@@ -157,14 +164,14 @@ describe('API Integration Tests', () => {
           status: 503,
           statusText: 'Service Unavailable',
           headers: { 'content-type': 'application/json' },
-          config: {}
+          config: {},
         })
         .mockResolvedValueOnce({
           data: versionResponse,
           status: 200,
           statusText: 'OK',
           headers: { 'content-type': 'application/json' },
-          config: {}
+          config: {},
         });
 
       // Health check shows service is unhealthy
@@ -183,7 +190,7 @@ describe('API Integration Tests', () => {
     it('should validate request headers are set correctly', async () => {
       const mockResponse: HealthResponse = {
         status: HealthResponseStatusEnum.HEALTHY,
-        timestamp: '2025-06-03T10:00:00Z'
+        timestamp: '2025-06-03T10:00:00Z',
       };
 
       mockAxios.request.mockResolvedValueOnce({
@@ -191,7 +198,7 @@ describe('API Integration Tests', () => {
         status: 200,
         statusText: 'OK',
         headers: { 'content-type': 'application/json' },
-        config: {}
+        config: {},
       });
 
       await healthApi.getHealth();
@@ -206,22 +213,22 @@ describe('API Integration Tests', () => {
       const mockResponse: VersionResponse = {
         version: '1.0.0',
         build: '123',
-        timestamp: '2025-06-03T10:00:00Z'
+        timestamp: '2025-06-03T10:00:00Z',
       };
 
       mockAxios.request.mockResolvedValueOnce({
         data: mockResponse,
         status: 200,
         statusText: 'OK',
-        headers: { 
+        headers: {
           'content-type': 'application/json; charset=utf-8',
-          'x-api-version': '1.0'
+          'x-api-version': '1.0',
         },
-        config: {}
+        config: {},
       });
 
       const result = await infoApi.getVersion();
-      
+
       expect(result.data).toEqual(mockResponse);
       expect(result.headers['content-type']).toContain('application/json');
     });
@@ -230,16 +237,19 @@ describe('API Integration Tests', () => {
       const scenarios = [
         { status: 200, statusText: 'OK' },
         { status: 201, statusText: 'Created' },
-        { status: 202, statusText: 'Accepted' }
+        { status: 202, statusText: 'Accepted' },
       ];
 
       for (const scenario of scenarios) {
         mockAxios.request.mockResolvedValueOnce({
-          data: { status: HealthResponseStatusEnum.HEALTHY, timestamp: '2025-06-03T10:00:00Z' },
+          data: {
+            status: HealthResponseStatusEnum.HEALTHY,
+            timestamp: '2025-06-03T10:00:00Z',
+          },
           status: scenario.status,
           statusText: scenario.statusText,
           headers: { 'content-type': 'application/json' },
-          config: {}
+          config: {},
         });
 
         const result = await healthApi.getHealth();
@@ -257,8 +267,8 @@ describe('API Integration Tests', () => {
         path: '/health',
         details: {
           code: 'INVALID_PARAMS',
-          field: 'status'
-        }
+          field: 'status',
+        },
       };
 
       const axiosError = {
@@ -266,9 +276,9 @@ describe('API Integration Tests', () => {
           data: errorResponse,
           status: 400,
           statusText: 'Bad Request',
-          headers: { 'content-type': 'application/json' }
+          headers: { 'content-type': 'application/json' },
         },
-        message: 'Request failed with status code 400'
+        message: 'Request failed with status code 400',
       };
 
       mockAxios.request.mockRejectedValueOnce(axiosError);
@@ -287,7 +297,7 @@ describe('API Integration Tests', () => {
         { status: 401, error: 'UNAUTHORIZED' },
         { status: 403, error: 'FORBIDDEN' },
         { status: 404, error: 'NOT_FOUND' },
-        { status: 500, error: 'INTERNAL_SERVER_ERROR' }
+        { status: 500, error: 'INTERNAL_SERVER_ERROR' },
       ];
 
       for (const errorType of errorTypes) {
@@ -296,10 +306,10 @@ describe('API Integration Tests', () => {
             data: {
               error: errorType.error,
               message: `HTTP ${errorType.status} Error`,
-              timestamp: '2025-06-03T10:00:00Z'
+              timestamp: '2025-06-03T10:00:00Z',
             },
-            status: errorType.status
-          }
+            status: errorType.status,
+          },
         });
 
         try {
@@ -321,18 +331,28 @@ describe('API Integration Tests', () => {
 
     it('should handle empty configuration', () => {
       const emptyConfig = new Configuration({});
-      const apiWithEmptyConfig = new HealthApi(emptyConfig, undefined, mockAxios);
+      const apiWithEmptyConfig = new HealthApi(
+        emptyConfig,
+        undefined,
+        mockAxios
+      );
       expect(apiWithEmptyConfig).toBeDefined();
     });
 
     it('should handle partial configuration', () => {
       const partialConfig = new Configuration({
-        basePath: 'https://partial.api.com'
+        basePath: 'https://partial.api.com',
         // Missing other optional properties
       });
-      
-      const apiWithPartialConfig = new InfoApi(partialConfig, undefined, mockAxios);
-      expect((apiWithPartialConfig as any).basePath).toBe('https://partial.api.com');
+
+      const apiWithPartialConfig = new InfoApi(
+        partialConfig,
+        undefined,
+        mockAxios
+      );
+      expect((apiWithPartialConfig as any).basePath).toBe(
+        'https://partial.api.com'
+      );
     });
   });
 
@@ -341,11 +361,11 @@ describe('API Integration Tests', () => {
       // This test verifies TypeScript compilation and type safety
       expect(typeof healthApi.getHealth).toBe('function');
       expect(typeof infoApi.getVersion).toBe('function');
-      
+
       // Configuration should be properly typed
       const typedConfig: Configuration = new Configuration({
         basePath: 'string',
-        accessToken: 'string'
+        accessToken: 'string',
       });
       expect(typedConfig).toBeDefined();
     });
@@ -353,13 +373,13 @@ describe('API Integration Tests', () => {
     it('should maintain response type integrity', async () => {
       const healthResponse: HealthResponse = {
         status: HealthResponseStatusEnum.HEALTHY,
-        timestamp: '2025-06-03T10:00:00Z'
+        timestamp: '2025-06-03T10:00:00Z',
       };
 
       const versionResponse: VersionResponse = {
         version: '1.0.0',
         build: '123',
-        timestamp: '2025-06-03T10:00:00Z'
+        timestamp: '2025-06-03T10:00:00Z',
       };
 
       mockAxios.request
@@ -368,14 +388,14 @@ describe('API Integration Tests', () => {
           status: 200,
           statusText: 'OK',
           headers: {},
-          config: {}
+          config: {},
         })
         .mockResolvedValueOnce({
           data: versionResponse,
           status: 200,
           statusText: 'OK',
           headers: {},
-          config: {}
+          config: {},
         });
 
       const healthResult = await healthApi.getHealth();

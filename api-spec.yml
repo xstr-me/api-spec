@@ -3,13 +3,13 @@ info:
   title: XStr.me API
   description: |
     OpenAPI specification for XStr.me services.
-    
+
     This API provides endpoints for managing and accessing XStr.me functionality.
-  version: "0.0.1-alpha"
+  version: '0.0.1-alpha'
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
-  
+
 servers:
   - url: https://api.xstr.me/v1
     description: Production server
@@ -77,12 +77,12 @@ components:
         uptime:
           type: string
           description: API uptime duration
-          example: "2d 5h 30m"
+          example: '2d 5h 30m'
       example:
         status: healthy
-        timestamp: "2025-05-27T10:30:00Z"
-        version: "0.0.1-alpha"
-        uptime: "2d 5h 30m"
+        timestamp: '2025-05-27T10:30:00Z'
+        version: '0.0.1-alpha'
+        uptime: '2d 5h 30m'
 
     VersionResponse:
       type: object
@@ -101,9 +101,9 @@ components:
           format: date-time
           description: Build timestamp
       example:
-        version: "0.0.1-alpha"
-        build: "abc123def"
-        timestamp: "2025-05-27T08:00:00Z"
+        version: '0.0.1-alpha'
+        build: 'abc123def'
+        timestamp: '2025-05-27T08:00:00Z'
 
     ErrorResponse:
       type: object
@@ -125,9 +125,9 @@ components:
           format: date-time
           description: Error timestamp
       example:
-        error: "SERVICE_UNAVAILABLE"
-        message: "The service is temporarily unavailable"
-        timestamp: "2025-05-27T10:30:00Z"
+        error: 'SERVICE_UNAVAILABLE'
+        message: 'The service is temporarily unavailable'
+        timestamp: '2025-05-27T10:30:00Z'
 
   securitySchemes:
     BearerAuth:
