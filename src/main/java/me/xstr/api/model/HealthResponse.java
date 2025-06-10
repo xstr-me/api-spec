@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import java.time.OffsetDateTime;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.lang.Nullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import jakarta.validation.Valid;
@@ -22,7 +23,7 @@ import jakarta.annotation.Generated;
  * HealthResponse
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.13.0")
 public class HealthResponse implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -35,7 +36,7 @@ public class HealthResponse implements Serializable {
     
     UNHEALTHY("unhealthy");
 
-    private String value;
+    private final String value;
 
     StatusEnum(String value) {
       this.value = value;
@@ -91,7 +92,7 @@ public class HealthResponse implements Serializable {
   /**
    * Health status of the API
    * @return status
-  */
+   */
   @NotNull 
   @Schema(name = "status", description = "Health status of the API", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("status")
@@ -111,7 +112,7 @@ public class HealthResponse implements Serializable {
   /**
    * Timestamp of the health check
    * @return timestamp
-  */
+   */
   @NotNull @Valid 
   @Schema(name = "timestamp", description = "Timestamp of the health check", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("timestamp")
@@ -131,7 +132,7 @@ public class HealthResponse implements Serializable {
   /**
    * API version
    * @return version
-  */
+   */
   
   @Schema(name = "version", description = "API version", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("version")
@@ -151,7 +152,7 @@ public class HealthResponse implements Serializable {
   /**
    * API uptime duration
    * @return uptime
-  */
+   */
   
   @Schema(name = "uptime", example = "2d 5h 30m", description = "API uptime duration", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("uptime")

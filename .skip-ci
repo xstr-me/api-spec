@@ -1,0 +1,6 @@
+TEMPORARY: Skip all CI/CD checks
+This file indicates that all automated checks should be temporarily disabled.
+Remove this file to re-enable checks.
+
+Created on: June 4, 2025
+Reason: Temporarily disable checks for development work

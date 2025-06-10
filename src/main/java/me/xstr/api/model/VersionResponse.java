@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import java.time.OffsetDateTime;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.lang.Nullable;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import jakarta.validation.Valid;
@@ -21,7 +22,7 @@ import jakarta.annotation.Generated;
  * VersionResponse
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.13.0")
 public class VersionResponse implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -53,7 +54,7 @@ public class VersionResponse implements Serializable {
   /**
    * API version
    * @return version
-  */
+   */
   @NotNull 
   @Schema(name = "version", description = "API version", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("version")
@@ -73,7 +74,7 @@ public class VersionResponse implements Serializable {
   /**
    * Build number or commit hash
    * @return build
-  */
+   */
   @NotNull 
   @Schema(name = "build", description = "Build number or commit hash", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("build")
@@ -93,7 +94,7 @@ public class VersionResponse implements Serializable {
   /**
    * Build timestamp
    * @return timestamp
-  */
+   */
   @Valid 
   @Schema(name = "timestamp", description = "Build timestamp", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("timestamp")

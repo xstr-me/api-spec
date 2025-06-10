@@ -13,11 +13,5 @@
   "listInvalidSymbolLinks": true,
   "categorizeByGroup": false,
   "defaultCategory": "Other",
-  "categoryOrder": [
-    "APIs",
-    "Models",
-    "Configuration",
-    "*",
-    "Other"
-  ]
+  "categoryOrder": ["APIs", "Models", "Configuration", "*", "Other"]
 }

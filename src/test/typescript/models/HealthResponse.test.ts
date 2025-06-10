@@ -7,8 +7,8 @@ describe('HealthResponse', () => {
       timestamp: '2025-06-03T10:00:00Z',
       checks: {
         database: 'OK',
-        cache: 'OK'
-      }
+        cache: 'OK',
+      },
     };
 
     expect(healthResponse).toBeDefined();
@@ -16,20 +16,20 @@ describe('HealthResponse', () => {
     expect(healthResponse.timestamp).toBe('2025-06-03T10:00:00Z');
     expect(healthResponse.checks).toEqual({
       database: 'OK',
-      cache: 'OK'
+      cache: 'OK',
     });
   });
 
   it('should handle different status values', () => {
     const statuses = ['OK', 'WARNING', 'ERROR', 'UNKNOWN'];
-    
+
     statuses.forEach(status => {
       const healthResponse: HealthResponse = {
         status,
         timestamp: '2025-06-03T10:00:00Z',
-        checks: {}
+        checks: {},
       };
-      
+
       expect(healthResponse.status).toBe(status);
     });
   });
@@ -37,7 +37,7 @@ describe('HealthResponse', () => {
   it('should handle optional properties', () => {
     const minimalResponse: HealthResponse = {
       status: 'OK',
-      timestamp: '2025-06-03T10:00:00Z'
+      timestamp: '2025-06-03T10:00:00Z',
     };
 
     expect(minimalResponse.checks).toBeUndefined();

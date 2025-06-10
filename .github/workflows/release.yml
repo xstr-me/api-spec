@@ -93,7 +93,7 @@ jobs:
     if: needs.prepare-release.outputs.release_created == 'true' || github.event.inputs.dry_run == 'true'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+            - name: Checkout code
         uses: actions/checkout@v4
         with:
           ref: ${{ needs.prepare-release.outputs.tag_name || github.sha }}
@@ -104,13 +104,13 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: 'temurin'
           cache: maven
-
+          
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-
+          
       - name: Validate OpenAPI specification
         run: |
           mvn clean validate
@@ -123,7 +123,9 @@ jobs:
           
           # Install npm dependencies and audit
           npm ci
-          npm audit --audit-level=moderate      - name: Run tests
+          npm audit --audit-level=moderate
+
+      - name: Run tests
         run: |
           mvn clean test
           

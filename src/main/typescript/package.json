@@ -45,7 +45,8 @@
   "engines": {
     "node": ">=16.0.0",
     "npm": ">=8.0.0"
-  },  "scripts": {
+  },
+  "scripts": {
     "clean": "rimraf dist coverage .nyc_output docs",
     "prebuild": "npm run clean",
     "build": "npm run build:cjs && npm run build:esm",

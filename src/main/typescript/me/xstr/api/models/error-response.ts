@@ -40,9 +40,9 @@ export interface ErrorResponse {
     'details'?: object;
     /**
      * Error timestamp
-     * @type {string}
+     * @type {Date}
      * @memberof ErrorResponse
      */
-    'timestamp'?: string;
+    'timestamp'?: Date;
 }
 
